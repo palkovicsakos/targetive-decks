@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W1 Roof — FINAL Structure · Review &amp; Approve</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c232d; --line:#2a313c; --ink:#e6edf3; --dim:#9aa7b4;
+    --green:#2ea043; --greenbg:rgba(46,160,67,.12); --amber:#d29922; --amberbg:rgba(210,153,34,.12);
+    --red:#f85149; --redbg:rgba(248,81,73,.12); --blue:#388bfd; --bluebg:rgba(56,139,253,.12);
+    --purple:#a371f7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  header{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,#0e1116,#0e1116ee);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:14px 22px}
+  h1{margin:0;font-size:17px;letter-spacing:.2px}
+  .sub{color:var(--dim);font-size:12.5px;margin-top:3px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .chip{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--line)}
+  .chip.g{background:var(--greenbg);color:#7ee787;border-color:#2ea04355}
+  .chip.a{background:var(--amberbg);color:#e3b341;border-color:#d2992255}
+  .chip.r{background:var(--redbg);color:#ff7b72;border-color:#f8514955}
+  .chip.b{background:var(--bluebg);color:#79c0ff;border-color:#388bfd55}
+  .banner{margin-top:11px;background:var(--redbg);border:1px solid #f8514944;color:#ffb4ae;border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600}
+  nav{display:flex;gap:4px;padding:10px 18px 0;flex-wrap:wrap;border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:118px;z-index:9}
+  nav button{background:none;border:none;border-bottom:2px solid transparent;color:var(--dim);padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0}
+  nav button:hover{color:var(--ink);background:var(--panel)}
+  nav button.active{color:#fff;border-bottom-color:var(--blue)}
+  main{max-width:1080px;margin:0 auto;padding:22px}
+  .view{display:none} .view.active{display:block}
+  h2{font-size:15px;margin:0 0 12px;color:#fff}
+  p.lead{color:var(--dim);margin:0 0 18px;max-width:760px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:780px){.grid2{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+  .card h3{margin:0 0 6px;font-size:14px}
+  .card .meta{color:var(--dim);font-size:12px;margin-bottom:8px}
+  .tree{background:#0a0d12;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow:auto}
+  .tree pre{margin:0;font-size:12.5px;line-height:1.6;white-space:pre}
+  .new{color:#7ee787;font-weight:700}
+  .chg{color:#e3b341;font-weight:700}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0;font-size:12px;color:var(--dim)}
+  .legend b{color:var(--ink)}
+  .tag{display:inline-block;padding:1px 7px;border-radius:5px;font-size:10.5px;font-weight:700;letter-spacing:.3px;vertical-align:middle}
+  .t-new{background:var(--greenbg);color:#7ee787}.t-chg{background:var(--amberbg);color:#e3b341}
+  .t-keep{background:#8b949e22;color:#c9d1d9}
+  .dgroup{margin-bottom:26px}
+  .dgroup>.ghead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .ghead .gt{font-size:14px;font-weight:700}
+  .ghead .gc{color:var(--dim);font-size:12px}
+  .ghead .bulk{margin-left:auto}
+  .dcard{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px;transition:.15s}
+  .dcard.s-approve{border-left-color:var(--green);background:linear-gradient(90deg,var(--greenbg),var(--panel) 60%)}
+  .dcard.s-flag{border-left-color:var(--amber);background:linear-gradient(90deg,var(--amberbg),var(--panel) 60%)}
+  .dcard .dt{font-weight:600;font-size:13.5px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .dcard .why{color:var(--dim);font-size:12.5px;margin:6px 0 2px}
+  .dcard .sup{color:#8b949e;font-size:11.5px;margin-top:4px}
+  .dcard .sup b{color:#c9d1d9;font-weight:600}
+  .row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  button.act{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer}
+  button.act:hover{border-color:#3d444d}
+  button.act.ap.on{background:var(--green);border-color:var(--green);color:#04260f}
+  button.act.fl.on{background:var(--amber);border-color:var(--amber);color:#2b1d00}
+  textarea{width:100%;margin-top:8px;background:#0a0d12;border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:8px;font:12.5px/1.5 ui-monospace,monospace;resize:vertical;min-height:34px;display:none}
+  textarea.show{display:block}
+  .verdict{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:5px}
+  .v-new{background:var(--greenbg);color:#7ee787}.v-chg{background:var(--amberbg);color:#e3b341}
+  .v-scope{background:var(--bluebg);color:#79c0ff}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 16px;margin-bottom:12px}
+  summary{cursor:pointer;font-weight:600;padding:8px 0;font-size:14px}
+  details ul{margin:6px 0 12px;padding-left:20px;color:var(--dim);font-size:13px}
+  details li{margin-bottom:5px}
+  table.spine{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+  table.spine th,table.spine td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  table.spine th{background:var(--panel2);color:#fff}
+  .export{position:sticky;bottom:0}
+  .export textarea{display:block;min-height:120px;font-size:12px}
+  .bar{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+  .bar .stat{color:var(--dim);font-size:12.5px}
+  .copy{background:var(--blue);border:none;color:#fff;border-radius:7px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:13px}
+  .copy:hover{background:#519dff}
+  .note{color:var(--dim);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>W1 Roof — <span style="color:#7ee787">FINAL</span> Structure · Review &amp; Approve <span class="note">· 2026-06-17 (refreshed)</span></h1>
+  <div class="sub">The roof design after today's review (council Second-Horizon pass + AIOS-spec alignment). Mark each <b>Approve</b> / <b>Flag</b>, add notes, <b>Export</b> → paste back to Jarvis.</div>
+  <div class="chips">
+    <span class="chip g">roof + assets + OS layer</span>
+    <span class="chip a">7 decision groups</span>
+    <span class="chip b">5 agents verified</span>
+    <span class="chip r">gated: council + AIOS specs</span>
+    <span class="chip">scale-without-reorg</span>
+  </div>
+  <div class="banner">🟥 NOTHING EXECUTED. This is the final design for <code>1.Projects/targetive/</code>. Your export = sign-off for the guarded build (sanctioned block; weekday = selling).</div>
+</header>
+
+<nav>
+  <button class="active" data-v="overview">What changed</button>
+  <button data-v="tree">Final roof</button>
+  <button data-v="spine">Data spine + lifecycle</button>
+  <button data-v="decisions">Decisions ▸ needs you</button>
+  <button data-v="scope">Build scope</button>
+  <button data-v="export">Export feedback</button>
+</nav>
+
+<main>
+  <!-- OVERVIEW -->
+  <section class="view active" id="overview">
+    <h2>What changed this session</h2>
+    <p class="lead">Your pushback was right: a lean throwaway skeleton = re-org hell later. The fix isn't pre-building 100 folders — it's a <b>fixed convention + an onboarding SOP an agent runs to provision every client by rule</b>, so growth never forces a re-org. That's the Ben-AIOS model, and it's already in the W4 delivery spec.</p>
+    <div class="grid2">
+      <div class="card"><h3>★ 3 NEW layers</h3>
+        <b>sales-materials/</b> — one home for everything you sell WITH (offer · decks · proof · proposals · lead-magnets · content · growth-plan engine).<br><br>
+        <b>clients/&lt;slug&gt;/</b> — per-client layer; <code>slug = sales.clients.client_id = client_&lt;slug&gt; schema = folder</code> (one eternal key).<br><br>
+        <b>_ops/</b> — the scale engine: org rules + the onboarding SOP that stamps each new client identically.</div>
+      <div class="card"><h3>The scale answer (why no re-org)</h3>Scaling does NOT live in the folder tree — it lives in <b>Supabase</b> (shared <code>client</code> schema + <code>client_id</code> RLS) + the <b>onboarding SOP</b>. The folder is just the human/Claude-Code mirror. Scaling to 50 clients = running the onboarding skill 50 times. <b>You never re-organize again.</b></div>
+    </div>
+    <div class="card"><h3>✅ 4 decisions applied (confirm in Decisions tab)</h3>30M docs → archive, <b>MASTERPLAN-40-50M = current strategy</b> · offer-page + landing-page (test-only) → archive · lead-magnets = ONE (the outbound teardown) · content = ONE guide + a parked engine.</div>
+    <div class="card"><h3>🧭 Honest scope (council + the W4 spec agree)</h3>Build the <b>scale-ready substrate</b> now (skeleton + _TEMPLATE + _ops SOP + Gap-1 DDL). Moat machinery = <b>planned, stays in shared AIOS, build tied to AIOS</b> (your flag 2). See <b>Build scope</b>.</div>
+    <div class="card"><h3>🆕 Expanded this round (what you asked for)</h3>After 5 inventory/digest agents: <b>asset homes</b> (skills · enrichment engine · workflows) · the <b>AIOS boundary</b> (shared foundation vs roof) · the <b>OS layer</b> from Ben AIOS (per-folder CLAUDE.md routing + the <b>optimizer</b> that stops the rot + context gaps) · the <b>per-project convention + agent rules + inbox</b>. New decision groups are in <b>Decisions</b>.</div>
+    <div class="card"><h3>🛡️ Gates that ran before you (review-gate)</h3><b>/council</b> Second-Horizon pass on the structure · the <b>W3/W4 AIOS specs</b> as the engineering gate · <b>5 sub-agents</b> verified every asset path. You're reviewing pressure-tested output, not raw.</div>
+  </section>
+
+  <!-- TREE -->
+  <section class="view" id="tree">
+    <h2>Final roof: <code>1.Projects/targetive/</code></h2>
+    <p class="lead">Rename of <code>client-acquisition-os/</code> (keeps its <code>.git</code>; <code>.gitignore:82</code> same commit). <span class="new">Green = NEW this session</span> · <span class="chg">amber = changed</span>.</p>
+    <div class="legend">
+      <span><span class="tag t-new">NEW</span> added this session</span>
+      <span><span class="tag t-chg">CHG</span> changed</span>
+      <span><span class="tag t-keep">KEEP</span> from original map</span>
+    </div>
+    <div class="tree"><pre>
+1.Projects/<b>targetive/</b>                      <span class="tag t-keep">KEEP .git</span> (rename of client-acquisition-os)
+├── 00-INDEX.md                         <span class="tag t-chg">CHG</span> rewrite (drop stale "24/7 worker LIVE")
+├── <b>sprint/</b>      Q3 plan · scorecard · SOPs · METRICS-SoT · warm-outreach/ · handoffs
+│
+├── <b class="new">sales-materials/</b>            <span class="tag t-new">NEW</span> everything you SELL WITH
+│     ├ 00-SALES-REGISTRY.md          index: asset · where · current/stale · gap
+│     ├ offer/        tele-naptar ✅ · ladder · money-model · _archive/(v2-OptionC)
+│     ├ decks/        growth-plan-template (buyer) · buyer-demo · _archive/
+│     ├ proof/        RECEIPTS · <span class="chg">⚠CREATE sio-47x · carries-197x</span>
+│     ├ proposals/    proposal-and-closing + template
+│     ├ growth-plans/ the reusable ENGINE (template + build-SOP)
+│     ├ lead-magnets/ <span class="chg">outbound-teardown</span> (THE one) · _backlog/
+│     ├ content/      <span class="chg">reveal-the-problem.md</span> · _post-sprint/ (PARKED)
+│     └ _archive/     offer-page.html · landing-page.html (test-only)
+│
+├── <b class="new">clients/</b>                    <span class="tag t-new">NEW</span> per-client layer · slug = the eternal key
+│     ├ REGISTRY.md                   mirrors sales.clients
+│     ├ _TEMPLATE/   CLAUDE.md · ICP.md · MEMORY.md · 00-OVERVIEW(Attio+client_id)
+│     │              discovery/ · growth-plan/ · campaigns/ copy/ replies/ reports/
+│     │              contracts/ · .env 🔒 · leads/ 🔒
+│     └ &lt;slug&gt;/      e.g. sio-consulting/  (DB schema+RLS provisioned on WIN)
+│
+├── <b class="new">_ops/</b>                       <span class="tag t-new">NEW</span> the SCALE engine (why we never re-org)
+│     ├ ORG-RULES.md                  the fixed convention (W1's 10 laws)
+│     └ onboarding-SOP.md             agent stamps _TEMPLATE + clients row + schema by rule
+│
+├── <b>strategy/</b>    <span class="chg">MASTERPLAN-40-50M ✅(current)</span> · 10X · LAYER2 · foundations-research/ · _archive/(30M-*)
+├── <b>infra/</b>       outbound sending infra (unchanged)
+├── <b>engine/</b>      the lead-gen machine: code + enrichment + lead-data 🔒PII (unchanged)
+├── <b>knowledge-base/</b>  KEEP → DEDUPE (unchanged)
+├── <b>_archive/</b>    superseded framing + items archived this session
+└── <b>_consolidation/</b>  meta/decision folder (holds this W1-OUTPUT)
+
+LINK only (never moved, .git stays): growth-plan-deck-template · targetive-ai-app(+v2) · targetive-ai-web(DEAD) · instantly-mcp-repo
+</pre></div>
+    <div class="card" style="margin-top:14px"><h3>⚠️ The one mechanic that matters</h3>The rename + the <code>.gitignore:82</code> edit land in the <b>same commit</b> (else the parent tracks the nested repo as a broken gitlink). New: <code>clients/**/.env</code> + <code>clients/**/leads/</code> go straight into <code>.gitignore</code> (today's PII lesson).</div>
+    <div class="row">
+      <button class="act ap" data-app="tree">✓ Approve the final tree</button>
+      <button class="act fl" data-flag="tree">⚑ Flag — change something</button>
+    </div>
+    <textarea data-ta="tree" placeholder="What to change about the tree…"></textarea>
+  </section>
+
+  <!-- SPINE -->
+  <section class="view" id="spine">
+    <h2>The data spine + the no-re-org lifecycle</h2>
+    <p class="lead">One slug ties three layers; nobody duplicates state. This is what makes it scale without ever re-organizing.</p>
+    <table class="spine">
+      <tr><th>Layer</th><th>Source of truth</th><th>Keyed by</th><th>Holds</th></tr>
+      <tr><td>Deals</td><td><b>Attio</b></td><td>attio_record_id (in 00-OVERVIEW)</td><td>pipeline stage, value, close date</td></tr>
+      <tr><td>Leads / contacts</td><td><b>Supabase</b> sales schema</td><td>client_id (= slug)</td><td>lead + enrichment data the plan is built from</td></tr>
+      <tr><td>Tenant data</td><td><b>Supabase</b> client schema + RLS</td><td>client_id (= slug)</td><td>campaign→reply→deal rows, PII-isolated</td></tr>
+      <tr><td>Artifacts</td><td><b>filesystem</b> clients/&lt;slug&gt;/</td><td>folder name (= slug)</td><td>growth plan, discovery, contracts, delivery files</td></tr>
+    </table>
+    <div class="card" style="margin-top:14px"><h3>Lifecycle — one slug, born once</h3>
+    <pre class="mono" style="font-size:12px;color:var(--dim);white-space:pre-wrap">lead (Supabase row)
+  → deal opens in Attio
+      → clients/&lt;slug&gt;/ born (status=prospect) · onboarding SOP stamps _TEMPLATE · growth-plan built to close
+          → WON  → same folder/slug; SOP provisions sales.clients row + client_&lt;slug&gt; schema/RLS; delivery subfolders + .env activate
+          → LOST → folder → _archive/</pre>
+    No rename, no re-key, <b>no re-org — ever.</b></div>
+    <div class="row">
+      <button class="act ap" data-app="spine">✓ Approve the data spine + lifecycle</button>
+      <button class="act fl" data-flag="spine">⚑ Flag</button>
+    </div>
+    <textarea data-ta="spine" placeholder="Notes on the spine / lifecycle…"></textarea>
+  </section>
+
+  <!-- DECISIONS -->
+  <section class="view" id="decisions">
+    <h2>Decisions — confirm or flag</h2>
+    <p class="lead">The structural pieces + the 4 decisions applied. Approve = lock it. Flag = stop, I'll wait for your note.</p>
+    <div id="decisionRoot"></div>
+  </section>
+
+  <!-- SCOPE -->
+  <section class="view" id="scope">
+    <h2>Build scope — what executes vs defers</h2>
+    <p class="lead">Council + the W4 spec converge: build the scale-ready substrate now, defer the moat machinery until clients force it.</p>
+    <div id="scopeRoot"></div>
+  </section>
+
+  <!-- EXPORT -->
+  <section class="view" id="export">
+    <h2>Export your feedback</h2>
+    <p class="lead">Builds a paste-back summary of every Approve / Flag / note. Copy → drop in chat = sign-off for the guarded build.</p>
+    <div class="bar"><span class="stat" id="estat"></span><button class="copy" id="copyBtn">📋 Copy feedback</button></div>
+    <textarea id="exportBox" readonly></textarea>
+  </section>
+</main>
+
+<script>
+const DECISIONS = [
+  // STRUCTURE — the 3 new layers + spine
+  {g:'structure', id:'st_sales', v:'NEW', title:'sales-materials/ — the sell-WITH layer', why:'Consolidates offer · decks · proof · proposals · lead-magnets · content · growth-plan engine into one home.', sup:'Hormozi pass: lead-magnets=1 (teardown), content=1 guide+parked engine'},
+  {g:'structure', id:'st_clients', v:'NEW', title:'clients/<slug>/ — slug-keyed per-client layer', why:'folder = sales.clients.client_id = client_<slug> schema. _TEMPLATE = the fixed convention (CLAUDE.md·ICP.md·MEMORY.md·00-OVERVIEW·discovery/·growth-plan/·campaigns/copy/replies/reports/contracts·.env🔒). Replaces the earlier accounts/ idea.', sup:'W4 delivery spec line 798 (a client = row + schema + clients/<slug>/ folder)'},
+  {g:'structure', id:'st_ops', v:'NEW', title:'_ops/ — the scale engine (no re-org)', why:'ORG-RULES (fixed convention) + onboarding-SOP (agent stamps each client identically). Scaling = running the SOP per client, not re-organizing.', sup:'the Ben-AIOS rules+SOPs+agents model'},
+  {g:'structure', id:'st_growth', v:'NEW', title:'growth-plan: engine vs instance split', why:'Reusable engine → sales-materials/growth-plans/. Per-prospect instance → clients/<slug>/growth-plan/.', sup:''},
+  // DECISIONS applied
+  {g:'applied', id:'ap_30m', v:'CHG', title:'30M docs → archive · MASTERPLAN-40-50M = current strategy', why:'30M-60-DAY-STRATEGY + 30M-CASHFLOW + 30M-DECISION-DECK → strategy/_archive/. The 40-50M masterplan is the live strategy.', sup:'MASTERPLAN-40-50M-2026-06-17.md + CEO-REVIEW-DECK'},
+  {g:'applied', id:'ap_pages', v:'CHG', title:'offer-page.html + landing-page.html → archive', why:'Test-only; render old Starter/Growth/Scale tiers. Final pages built later, together.', sup:'your call this session: "just testing"'},
+  {g:'applied', id:'ap_lm', v:'CHG', title:'lead-magnets = ONE (the outbound teardown)', why:'Free pipeline/ICP teardown = the booked-call opener (Hormozi: free service 3x take rate). _backlog/ for future variants.', sup:'100m-leads — 7 Steps / Big Fast Value'},
+  {g:'applied', id:'ap_content', v:'CHG', title:'content = ONE guide + parked engine', why:'reveal-the-problem.md (the "7 hiba" narrow-problem asset) now; blog/newsletter/YouTube engine parked to _post-sprint/.', sup:'constraint = booked calls, not a content library'},
+  // ASSET CONSOLIDATION (verified by 4 inventory agents)
+  {g:'assets', id:'as_skills', v:'CONSOLIDATE', title:'Targetive skills → targetive/skills/ (+ _roadmap/)', why:'5 active + 5 proposed skills scattered across 4 zones (client-acquisition-os/skills, _skills-build, .claude/skills, app-build). General skills stay in .claude/skills/.', sup:'inventory agent 1'},
+  {g:'assets', id:'as_engine', v:'CONSOLIDATE', title:'Enrichment + website-enrichment → targetive/engine/', why:'Live 24/7 worker (6,699 Tier-A DMs) + hardened website pipeline (338 tests pass). Move the runnable code under engine/.', sup:'inventory agent 2 · VALIDATION-REPORT'},
+  {g:'assets', id:'as_wf', v:'KEEP', title:'Dynamic workflows stay in .claude/workflows/ (indexed in _ops/)', why:'18 .mjs build-tooling workflows (W1–W4, KB builds) = workspace tooling, not Targetive assets. Index them, do not move.', sup:'inventory agent 2'},
+  // AIOS BOUNDARY
+  {g:'aios', id:'ai_moat', v:'STAYS SHARED', title:'Moat machinery stays in ai-native-build/foundation; Targetive INHERITS', why:'write-back queue · RLS · pgvector · copy_performance already spec’d in foundation/supabase/migrations. Targetive consumes via a pointer doc, never copies. SWEY = 2nd business on the same foundation. (Resolves flag 2: planned, not built.)', sup:'inventory agent 3 · W4 spec'},
+  // OS-LAYER (Ben AIOS adoption)
+  {g:'os', id:'os_routing', v:'ADOPT', title:'Per-folder CLAUDE.md routing', why:'Root CLAUDE.md stays the constitution; every project/subfolder gets a small CLAUDE.md that routes (what’s here · read-first · where new docs go). #1 anti-mess upgrade.', sup:'Ben AIOS digest'},
+  {g:'os', id:'os_optimizer', v:'ADOPT', title:'The OPTIMIZER skill (F8 dreams + F9 architecture) = the anti-mess enforcement', why:'Periodic walk-only pass that catches contradictions / merges / stale docs / orphans / ≤3-hop reachability across context + projects + memory. THIS is what stops the workspace becoming a mess (your exact fear).', sup:'Ben AIOS os-optimizer'},
+  {g:'os', id:'os_context', v:'ADOPT', title:'Context taxonomy gaps: icp.md · pain-points.md · market.md', why:'Cheap backfill from existing docs; sharpens Targetive selling.', sup:'Ben AIOS context taxonomy'},
+  {g:'os', id:'os_skip', v:'SKIP', title:'SKIP: os-mcp/team-os Relay · os-setup bootstrap · Daily-vs-Notion · profile-first Team tree', why:'We already have better (GitHub-sync + VPS + Notion SoT) or it adds lock-in (migration-light rule). Steal the patterns, not the Relay/vault-monolith substrate.', sup:'Ben AIOS mapping'},
+  // PER-PROJECT CONVENTION + RULES + INBOX
+  {g:'rules', id:'pr_conv', v:'ADOPT', title:'Per-project convention (CLAUDE.md + 00-INDEX + operations/ + inbox/ + outputs/)', why:'Every 1.Projects/* folder same shape; root = index-only. Fixes the 79-item root bloat the agents found.', sup:'inventory agent 4'},
+  {g:'rules', id:'pr_gates', v:'ADOPT', title:'Agent write-gates (propose-not-decide; the 10 laws)', why:'Agents create in inbox/in-review, never DONE / delete / LOCKED / auto-archive. Ákos decides. Folds into CLAUDE.md.', sup:'inventory agent 4'},
+  {g:'rules', id:'pr_inbox', v:'ADOPT', title:'Inbox model: context/sessions/inbox (sessions) · 0_Inbox (dropzone) · <project>/inbox (large only)', why:'You asked for an inbox to process things. Flow: capture → daily triage → route to canonical + INDEX → nightly dream consolidation.', sup:'inventory agent 4'},
+];
+const SCOPE = [
+  {g:'scope', id:'sc_now', v:'BUILD NOW', title:'Scale-ready substrate', why:'Folder skeleton + per-client _TEMPLATE + _ops/ORG-RULES + _ops/onboarding-SOP + sales-materials consolidation + migrate existing assets + .gitignore (clients/**/.env, leads/) + Supabase Gap-1 DDL (sales.clients + icp_scores).', sup:'≤ a sanctioned block'},
+  {g:'scope', id:'sc_demand', v:'CREATE NOW', title:'On-demand folders created NOW (flag 1)', why:'cold-email/ · content/ · delivery subfolders · lead-magnets/_backlog stamped now (with READMEs), not deferred. Your call: re-org cost > empty-folder cost.', sup:'Ákos flag 1'},
+  {g:'scope', id:'sc_assets', v:'CREATE', title:'The only NEW assets worth sprint time', why:'The teardown lead-magnet + Sió/CARRIES proof one-pagers — because they move booked calls.', sup:''},
+  {g:'scope', id:'sc_defer', v:'PLAN ONLY', title:'Moat machinery — planned, lives in shared AIOS, build tied to AIOS (flag 2)', why:'write-back · RLS · pgvector · copy_performance stay in ai-native-build/foundation; Targetive inherits. Structure planned now; BUILD gated on the AIOS-foundation work, not the roof.', sup:'Ákos flag 2 · §H'},
+];
+
+const GROUPS = {
+  structure:{label:'★ The 3 new structural layers', cls:'v-new', hint:'Approve = lock into the roof.'},
+  applied:  {label:'✅ Decisions applied this session', cls:'v-chg', hint:'Approve = confirm.'},
+  assets:   {label:'📦 Asset consolidation (what we already built)', cls:'v-new', hint:'Approve = lock the homes.'},
+  aios:     {label:'🔗 AIOS boundary (shared vs roof)', cls:'v-scope', hint:'Approve = inherit, do not copy.'},
+  os:       {label:'🧩 OS-layer adoption (Ben AIOS)', cls:'v-chg', hint:'Approve = adopt these, skip the rest.'},
+  rules:    {label:'📐 Per-project convention + agent rules + inbox', cls:'v-new', hint:'Approve = the anti-mess constitution.'},
+  scope:    {label:'🧭 Build scope', cls:'v-scope', hint:'Approve = agree with the now/defer split.'},
+};
+
+const ALL = [...DECISIONS, ...SCOPE];
+const state = {};
+[...ALL.map(d=>d.id),'tree','spine'].forEach(id=>state[id]={status:'pending',comment:''});
+
+function buildGroup(rootEl, gk){
+  const g = GROUPS[gk];
+  const items = ALL.filter(d=>d.g===gk);
+  const wrap = document.createElement('div'); wrap.className='dgroup';
+  wrap.innerHTML = `<div class="ghead"><span class="gt">${g.label}</span><span class="gc">${items.length} item${items.length>1?'s':''} · ${g.hint}</span>
+    <span class="bulk"><button class="act ap" data-bulk="${gk}">✓ Approve all</button></span></div>`;
+  items.forEach(d=>{
+    const c = document.createElement('div'); c.className='dcard'; c.id='card-'+d.id;
+    c.innerHTML = `<div class="dt"><span class="verdict ${g.cls}">${d.v}</span> <span>${d.title}</span></div>
+      <div class="why">${d.why}</div>
+      ${d.sup?`<div class="sup">↳ <b>basis:</b> ${d.sup}</div>`:''}
+      <div class="row">
+        <button class="act ap" data-app="${d.id}">✓ Approve</button>
+        <button class="act fl" data-flag="${d.id}">⚑ Flag / note</button>
+      </div>
+      <textarea data-ta="${d.id}" placeholder="Optional note…"></textarea>`;
+    wrap.appendChild(c);
+  });
+  rootEl.appendChild(wrap);
+}
+Object.keys(GROUPS).forEach(gk=>buildGroup(document.getElementById(gk==='scope'?'scopeRoot':'decisionRoot'),gk));
+
+function setStatus(id,st){
+  state[id].status = (state[id].status===st)?'pending':st;
+  const card=document.getElementById('card-'+id);
+  if(card){card.classList.remove('s-approve','s-flag'); if(state[id].status==='approve')card.classList.add('s-approve'); if(state[id].status==='flag')card.classList.add('s-flag');}
+  document.querySelectorAll(`[data-app="${id}"]`).forEach(b=>b.classList.toggle('on',state[id].status==='approve'));
+  document.querySelectorAll(`[data-flag="${id}"]`).forEach(b=>b.classList.toggle('on',state[id].status==='flag'));
+  const ta=document.querySelector(`[data-ta="${id}"]`); if(ta)ta.classList.toggle('show',state[id].status==='flag');
+  render();
+}
+document.addEventListener('click',e=>{
+  const ap=e.target.closest('[data-app]'); const fl=e.target.closest('[data-flag]'); const bk=e.target.closest('[data-bulk]');
+  if(bk){ALL.filter(d=>d.g===bk.dataset.bulk).forEach(d=>{if(state[d.id].status!=='approve')setStatus(d.id,'approve');});return;}
+  if(ap)setStatus(ap.dataset.app,'approve');
+  if(fl)setStatus(fl.dataset.flag,'flag');
+});
+document.addEventListener('input',e=>{const ta=e.target.closest('[data-ta]'); if(ta){state[ta.dataset.ta].comment=ta.value; render();}});
+
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); document.getElementById(b.dataset.v).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+
+const LABEL={tree:'Final roof tree',spine:'Data spine + lifecycle'};
+ALL.forEach(d=>LABEL[d.id]=d.title);
+function render(){
+  const ap=[],fl=[];
+  for(const id in state){
+    const s=state[id]; if(s.status==='pending'&&!s.comment.trim())continue;
+    const line=`- ${LABEL[id]}${s.comment.trim()?`  →  NOTE: ${s.comment.trim()}`:''}`;
+    if(s.status==='approve') ap.push(line);
+    else fl.push(line);
+  }
+  let out='W1 ROOF — FINAL STRUCTURE — Ákos review feedback (2026-06-17)\n============================================================\n\n';
+  if(ap.length){out+=`✅ APPROVED — lock + proceed (${ap.length}):\n${ap.join('\n')}\n\n`;}
+  if(fl.length){out+=`⚑ FLAGGED — hold / change (${fl.length}):\n${fl.join('\n')}\n\n`;}
+  if(!ap.length&&!fl.length)out+='(nothing marked yet — approve or flag items above)\n';
+  else out+='— End. Anything not listed = left pending (no change).';
+  document.getElementById('exportBox').value=out;
+  const done=Object.values(state).filter(s=>s.status!=='pending'||s.comment.trim()).length;
+  document.getElementById('estat').textContent=`${done} item(s) marked · ${ap.length} approved · ${fl.length} flagged`;
+}
+document.getElementById('copyBtn').addEventListener('click',()=>{
+  const t=document.getElementById('exportBox'); t.select(); navigator.clipboard.writeText(t.value);
+  const b=document.getElementById('copyBtn'); const o=b.textContent; b.textContent='✓ Copied!'; setTimeout(()=>b.textContent=o,1400);
+});
+render();
+</script>
+</body>
+</html>
