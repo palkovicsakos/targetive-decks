@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Targetive Növekedési Motor - Carries - targetive.ai (v2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --ink:#0F172A; --ink-2:#152034; --deep:#14532D; --deep-2:#0f3d22;
+  --signal:#84CC16; --air:#A3E635; --paper:#F5F7F0; --bone:#FAFCF6;
+  --paper-2:#E8EEDF; --line:#DDE1D0; --line-d:#22304a; --mute:#6B7280;
+  --pos:#3f9142; --neg:#c0492f; --warn:#b5731a;
+  --r:14px; --max:1120px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0e18;color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.deck{width:100%;height:100%;position:relative;}
+
+.slide{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  opacity:0;pointer-events:none;transition:opacity .5s ease;
+  overflow-y:auto;padding:64px 56px 96px;background:var(--bone);
+}
+.slide::before,.slide::after{content:'';flex:1 1 0;}
+.slide.active{opacity:1;pointer-events:auto;}
+.slide::-webkit-scrollbar{width:6px;}
+.slide::-webkit-scrollbar-thumb{background:rgba(132,204,22,.4);border-radius:3px;}
+.slide::-webkit-scrollbar-track{background:transparent;}
+
+/* surfaces */
+.slide[data-s="ink"]{background:var(--ink);color:var(--paper);}
+.slide[data-s="deep"]{background:var(--deep);color:var(--paper);}
+.slide[data-s="signal"]{background:var(--signal);color:var(--ink);}
+.inner{width:100%;max-width:var(--max);flex-shrink:0;}
+
+/* watermark mark */
+.wm{position:absolute;pointer-events:none;opacity:.05;right:-40px;top:50%;transform:translateY(-50%);}
+.slide[data-s="ink"] .wm,.slide[data-s="deep"] .wm{opacity:.07;}
+
+/* type */
+.kick{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--deep);display:flex;align-items:center;gap:10px;}
+.slide[data-s="ink"] .kick,.slide[data-s="deep"] .kick{color:var(--air);}
+.slide[data-s="signal"] .kick{color:var(--deep);}
+.kick::before{content:"";width:22px;height:2px;background:currentColor;display:inline-block;}
+h1{font-size:64px;font-weight:800;letter-spacing:-.04em;line-height:1.0;text-wrap:balance;}
+h2{font-size:46px;font-weight:800;letter-spacing:-.035em;line-height:1.03;text-wrap:balance;margin-top:16px;}
+h3{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.2;}
+h4{font-size:19px;font-weight:700;letter-spacing:-.01em;}
+.sub{font-size:20px;color:var(--mute);line-height:1.5;margin-top:16px;max-width:62ch;font-weight:400;}
+.slide[data-s="ink"] .sub,.slide[data-s="deep"] .sub{color:rgba(245,247,240,.72);}
+.lede{font-size:17px;line-height:1.65;}
+.acc{color:var(--deep);} .slide[data-s="ink"] .acc,.slide[data-s="deep"] .acc{color:var(--air);}
+.neg{color:var(--neg);} .pos{color:var(--pos);} .warn{color:var(--warn);}
+.mut{color:var(--mute);} .slide[data-s="ink"] .mut{color:rgba(245,247,240,.55);}
+strong{font-weight:700;}
+.tnum{font-variant-numeric:tabular-nums;}
+
+/* cards */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:28px;}
+.slide[data-s="ink"] .card{background:var(--ink-2);border-color:var(--line-d);}
+.slide[data-s="deep"] .card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);}
+.card.tint-neg{background:#fbeeea;border-color:#eccfc6;}
+.card.tint-pos{background:#eef6ee;border-color:#cfe6d0;}
+.slide[data-s="ink"] .card.tint-neg{background:rgba(192,73,47,.12);border-color:rgba(192,73,47,.3);}
+.slide[data-s="ink"] .card.tint-pos{background:rgba(63,145,66,.12);border-color:rgba(63,145,66,.3);}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+
+/* pills / chips */
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:600;background:var(--paper);}
+.slide[data-s="ink"] .pill{background:var(--ink-2);border-color:var(--line-d);}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:6px;}
+
+/* big stat */
+.bignum{font-size:84px;font-weight:900;letter-spacing:-.04em;line-height:.92;}
+.stat .n{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;}
+.stat .l{font-size:13px;color:var(--mute);margin-top:8px;line-height:1.35;}
+.slide[data-s="ink"] .stat .l{color:rgba(245,247,240,.6);}
+
+/* data-viz bars */
+.bar{height:12px;border-radius:6px;background:var(--paper-2);overflow:hidden;}
+.bar > i{display:block;height:100%;border-radius:6px;background:var(--signal);}
+.col-bars{display:flex;align-items:flex-end;gap:18px;height:200px;}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px;height:100%;}
+.col .fill{width:100%;border-radius:10px 10px 0 0;background:var(--signal);display:flex;align-items:flex-start;justify-content:center;padding-top:12px;font-weight:800;font-size:22px;color:var(--ink);}
+/* funnel */
+.funnel{display:flex;flex-direction:column;gap:8px;align-items:center;}
+.funnel .seg{border-radius:8px;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;width:100%;font-size:15px;}
+.divider{height:1px;background:var(--line);margin:18px 0;}
+.slide[data-s="ink"] .divider{background:var(--line-d);}
+
+/* lists */
+.lst{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.lst li{display:flex;gap:11px;font-size:15.5px;line-height:1.5;}
+.lst li .ic{flex:none;margin-top:3px;}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:16px;}
+.slide[data-s="ink"] .row{border-color:var(--line-d);}
+.row:last-child{border-bottom:none;}
+.row .v{font-weight:700;}
+
+/* quote */
+.quote{border-left:3px solid var(--signal);padding:14px 0 14px 18px;font-size:16px;line-height:1.55;font-style:italic;color:var(--ink);}
+.slide[data-s="ink"] .quote{color:var(--paper);}
+.quote .by{display:block;font-style:normal;font-size:12px;color:var(--mute);margin-top:8px;font-weight:600;}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;gap:0;}
+.tl .step{display:grid;grid-template-columns:120px 1fr;gap:24px;padding:20px 0;border-top:1px solid var(--line);}
+.tl .step:first-child{border-top:none;}
+.tl .when{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--deep);}
+
+/* featured price */
+.price-feat{border:2px solid var(--signal);border-radius:var(--r);padding:32px;background:#fff;position:relative;}
+.price-badge{position:absolute;top:-13px;left:32px;background:var(--signal);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:6px;}
+
+/* faq + details */
+.acc-item{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--paper);overflow:hidden;}
+.acc-item summary{padding:16px 20px;cursor:pointer;font-weight:600;font-size:16px;list-style:none;display:flex;justify-content:space-between;gap:14px;align-items:center;}
+.acc-item summary::-webkit-details-marker{display:none;}
+.acc-item summary::after{content:"+";color:var(--deep);font-weight:700;font-size:20px;flex:none;transition:transform .2s;}
+.acc-item[open] summary::after{transform:rotate(45deg);}
+.acc-item .body{padding:0 20px 18px;font-size:14.5px;color:var(--mute);line-height:1.6;}
+.ph{border:2px dashed var(--line);border-radius:12px;min-height:150px;display:flex;align-items:center;justify-content:center;color:var(--mute);font-size:14px;font-weight:500;text-align:center;padding:16px;background:var(--paper);}
+.slide[data-s="ink"] .ph{border-color:var(--line-d);background:var(--ink-2);}
+
+/* fade-up */
+.fu{opacity:0;transform:translateY(16px);}
+.slide.active .fu{animation:fu .55s ease both;}
+@keyframes fu{to{opacity:1;transform:translateY(0);}}
+.slide.active .fu:nth-child(1){animation-delay:.05s}
+.slide.active .fu:nth-child(2){animation-delay:.12s}
+.slide.active .fu:nth-child(3){animation-delay:.19s}
+.slide.active .fu:nth-child(4){animation-delay:.26s}
+.slide.active .fu:nth-child(5){animation-delay:.33s}
+.slide.active .fu:nth-child(6){animation-delay:.40s}
+.slide.active .fu:nth-child(7){animation-delay:.47s}
+@media(prefers-reduced-motion:reduce){.fu{opacity:1;transform:none;animation:none!important;}}
+
+/* chrome */
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--signal);z-index:200;transition:width .4s ease;}
+.idx{position:fixed;bottom:18px;right:26px;font-size:13px;font-weight:600;color:var(--mute);z-index:120;font-variant-numeric:tabular-nums;letter-spacing:.05em;}
+.sec{position:fixed;bottom:18px;left:26px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);z-index:120;}
+.navbar{position:fixed;bottom:0;left:0;right:0;height:0;z-index:100;}
+.dots{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:120;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .2s;}
+.dot.active{background:var(--signal);transform:scale(1.35);}
+.brandtag{position:fixed;top:18px;left:26px;z-index:120;display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:-.03em;color:var(--ink);}
+
+@media(max-width:1024px){
+  .slide{padding:48px 28px 90px;} h1{font-size:46px;} h2{font-size:36px;} .bignum{font-size:64px;}
+  .grid3,.grid4{grid-template-columns:1fr 1fr;} .tl .step{grid-template-columns:90px 1fr;gap:14px;}
+}
+@media(max-width:640px){
+  .slide{padding:36px 18px 84px;} h1{font-size:34px;} h2{font-size:28px;} .bignum{font-size:52px;}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr;} .col-bars{height:150px;}
+  .brandtag{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="brandtag" id="brandtag"></div>
+<div class="deck" id="deck">
+
+<!-- SLIDE 1: TITLE / HOOK -->
+<section class="slide active" data-s="ink" data-sec="Bevezető">
+  <div class="inner" style="text-align:center;">
+    <div class="fu" style="display:flex;justify-content:center;margin-bottom:28px;" data-mark="56"></div>
+    <p class="kick fu" style="justify-content:center;">targetive.ai</p>
+    <h1 class="fu" style="margin-top:18px;max-width:18ch;margin-left:auto;margin-right:auto;">Így generálunk <span class="acc">12 minősített beszélgetést</span> a(z) Carries számára</h1>
+    <p class="sub fu" style="margin-left:auto;margin-right:auto;text-align:center;">hideg hívás nélkül, manuális listázás nélkül és napi prospektálás nélkül.</p>
+    <div class="fu" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px;">
+      <span class="pill"><strong class="acc tnum" style="font-size:20px;">12+</strong> foglalt tárgyalás / 90 nap</span>
+      <span class="pill"><strong class="tnum" style="font-size:20px;">47×</strong> várható ROI</span>
+      <span class="pill"><strong class="tnum" style="font-size:20px;">100%</strong> személyre szabott üzenet</span>
+    </div>
+    <p class="fu mut" style="margin-top:34px;font-size:15px;">Készült: Carries vezetőség részére &middot; 2026. június</p>
+  </div>
+</section>
+
+<!-- SLIDE 2: WHAT WE LEARNED -->
+<section class="slide" data-s="bone" data-sec="Amit hallottunk">
+  <div class="inner">
+    <p class="kick fu">Amit hallottunk</p>
+    <h2 class="fu">Amit megtudtunk a(z) <span class="acc">Carries</span> cégről</h2>
+    <p class="sub fu">A(z) 2026.06.18 beszélgetésünk alapján.</p>
+    <div class="grid4 fu" style="margin-top:32px;">
+      <div class="card stat"><div class="n">22%</div><div class="l">jelenlegi zárási arány</div></div>
+      <div class="card stat"><div class="n neg">~25</div><div class="l">havi belső lead (ajánlás)</div></div>
+      <div class="card stat"><div class="n warn">1,4M Ft</div><div class="l">átlagos ügyfélérték</div></div>
+      <div class="card stat"><div class="n pos">0</div><div class="l">kimenő hideg csatorna</div></div>
+    </div>
+    <div class="grid2 fu" style="margin-top:20px;">
+      <div class="card tint-neg">
+        <h4 class="neg" style="margin-bottom:14px;">Ami nem működik</h4>
+        <ul class="lst">
+          <li><span class="ic neg">✕</span>Nincs kiszámítható lead-forrás</li>
+          <li><span class="ic neg">✕</span>A pipeline ajánlásfüggő</li>
+          <li><span class="ic neg">✕</span>Nincs kapacitás prospektálni</li>
+          <li><span class="ic neg">✕</span>A növekedés stagnál</li>
+        </ul>
+      </div>
+      <div class="card tint-pos">
+        <h4 class="pos" style="margin-bottom:14px;">Ami működik</h4>
+        <ul class="lst">
+          <li><span class="ic pos">✓</span>Erős terméktapasztalat</li>
+          <li><span class="ic pos">✓</span>Magas zárási arány meetingen</li>
+          <li><span class="ic pos">✓</span>Jó ügyfél-megtartás</li>
+          <li><span class="ic pos">✓</span>Tiszta pozicionálás</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: THREE GAPS -->
+<section class="slide" data-s="bone" data-sec="A probléma">
+  <div class="inner">
+    <p class="kick fu" style="color:var(--neg);">A probléma</p>
+    <h2 class="fu">Három hiányosság, ami <span class="neg">visszafogja a(z) Carries-t</span></h2>
+    <p class="sub fu">A felmérő beszélgetés során feltárt strukturális hiányosságok.</p>
+    <div class="grid3 fu" style="margin-top:32px;">
+      <div class="card" style="border-top:4px solid var(--neg);">
+        <div class="tag" style="background:#fbeeea;color:var(--neg);margin-bottom:14px;">01</div>
+        <h4 style="margin-bottom:10px;">Nincs kimenő motor</h4>
+        <p class="lede mut" style="font-size:14.5px;">Minden új ügyfél ajánlásból jön, ez nem skálázható és nem kiszámítható.</p>
+        <p class="quote" style="margin-top:14px;">„Ha elapad az ajánlás, nincs B-tervünk.”<span class="by">Carries</span></p>
+      </div>
+      <div class="card" style="border-top:4px solid var(--warn);">
+        <div class="tag" style="background:#f6efe0;color:var(--warn);margin-bottom:14px;">02</div>
+        <h4 style="margin-bottom:10px;">Nincs prospektáló kapacitás</h4>
+        <p class="lede mut" style="font-size:14.5px;">A csapat a kiszolgálással van elfoglalva, senki nem épít pipeline-t.</p>
+        <p class="quote" style="margin-top:14px;">„Tudom, hogy kéne hideg outbound, de nincs rá időnk.”<span class="by">Carries</span></p>
+      </div>
+      <div class="card" style="border-top:4px solid var(--deep);">
+        <div class="tag" style="background:var(--paper-2);color:var(--deep);margin-bottom:14px;">03</div>
+        <h4 style="margin-bottom:10px;">Nincs adatvezérelt célzás</h4>
+        <p class="lede mut" style="font-size:14.5px;">Nincs tiszta ICP és lista, így a hideg kísérletek elhalnak.</p>
+        <p class="quote" style="margin-top:14px;">„Kipróbáltuk a hideg emailt, de nem jött válasz.”<span class="by">Carries</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: COST OF INACTION -->
+<section class="slide" data-s="ink" data-sec="A tétlenség ára">
+  <div class="wm" data-mark="320"></div>
+  <div class="inner">
+    <p class="kick fu" style="color:#e8927a;">Miért vagyunk itt</p>
+    <h2 class="fu">Mennyibe kerül, <span style="color:#e8927a;">ha ezt nem oldjuk meg</span></h2>
+    <div class="fu" style="display:flex;align-items:flex-end;gap:40px;flex-wrap:wrap;margin-top:36px;">
+      <div>
+        <p class="mut" style="text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;color:#e8927a;">Minden hónap Növekedési Motor nélkül</p>
+        <p class="bignum neg" style="color:#e8927a;margin-top:10px;">2,8M Ft</p>
+        <p class="sub" style="margin-top:6px;">elveszített bevétel és ügyfél formájában</p>
+      </div>
+      <div style="flex:1;min-width:280px;">
+        <div class="col-bars">
+          <div class="col"><div class="fill" style="height:32%;background:#7a3a2e;color:#fff;">2,8M</div><span class="mut" style="font-size:12px;">Havi</span></div>
+          <div class="col"><div class="fill" style="height:60%;background:#9a4232;color:#fff;">8,4M</div><span class="mut" style="font-size:12px;">Negyedév</span></div>
+          <div class="col"><div class="fill" style="height:100%;background:#c0492f;color:#fff;">33,6M</div><span class="mut" style="font-size:12px;">Éves</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid4 fu" style="margin-top:32px;">
+      <div class="card stat"><div class="n neg" style="color:#e8927a;">8,4M Ft</div><div class="l">Negyedévente elveszítve</div></div>
+      <div class="card stat"><div class="n neg" style="color:#e8927a;">33,6M Ft</div><div class="l">Évente elveszítve</div></div>
+      <div class="card stat"><div class="n warn" style="color:#e0b066;">24</div><div class="l">Kiesett ügyfél évente</div></div>
+      <div class="card stat"><div class="n pos" style="color:var(--air);">4,2M Ft</div><div class="l">Élettartam-érték / ügyfél</div></div>
+    </div>
+    <p class="fu lede mut" style="margin-top:24px;max-width:72ch;">Minden kimenő motor nélküli hónap elveszett bevétel, és a lemaradás idővel csak nő.</p>
+  </div>
+</section>
+
+<!-- SLIDE 5: OLD WAY VS NEW WAY -->
+<section class="slide" data-s="bone" data-sec="A hiányzó láncszem">
+  <div class="inner">
+    <p class="kick fu">A hiányzó láncszem</p>
+    <h2 class="fu">Ami <span class="acc">végig hiányzott</span></h2>
+    <p class="sub fu">Az ajánlás kiszámíthatatlan, a hideg kísérletek pedig célzás és rendszer nélkül elhaltak.</p>
+    <div class="grid2 fu" style="margin-top:32px;align-items:stretch;">
+      <div class="card tint-neg">
+        <p class="tag" style="background:#f2d9d1;color:var(--neg);margin-bottom:14px;">A régi módszer</p>
+        <h3 style="margin-bottom:16px;">Ad-hoc, ajánlásalapú szerzés</h3>
+        <ul class="lst">
+          <li><span class="ic neg">✕</span>Kiszámíthatatlan volumen</li>
+          <li><span class="ic neg">✕</span>Nincs kontroll a pipeline felett</li>
+          <li><span class="ic neg">✕</span>Nem skálázható</li>
+          <li><span class="ic neg">✕</span>Lassú visszajelzési ciklus</li>
+        </ul>
+      </div>
+      <div class="card tint-pos">
+        <p class="tag" style="background:#d6ebd7;color:var(--pos);margin-bottom:14px;">Az új módszer</p>
+        <h3 style="margin-bottom:16px;">Rendszerezett kimenő motor</h3>
+        <ul class="lst">
+          <li><span class="ic pos">✓</span>Kiszámítható lead-folyam</li>
+          <li><span class="ic pos">✓</span>Adatvezérelt célzás</li>
+          <li><span class="ic pos">✓</span>Teljesen menedzselt</li>
+          <li><span class="ic pos">✓</span>Heti mérhető eredmény</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card fu" style="margin-top:20px;border-left:4px solid var(--signal);">
+      <p class="lede">Nem a terméked a gond, hanem hogy nincs kiszámítható csatorna, ami megtölti a naptárad.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: SOLUTION SUMMARY -->
+<section class="slide" data-s="deep" data-sec="A megoldás">
+  <div class="wm" data-mark="300"></div>
+  <div class="inner" style="text-align:center;">
+    <p class="kick fu" style="justify-content:center;">A megoldás</p>
+    <h2 class="fu" style="margin-left:auto;margin-right:auto;">A <span class="acc">Targetive Növekedési Motor</span></h2>
+    <p class="sub fu" style="margin-left:auto;margin-right:auto;text-align:center;">Megtöltjük a naptárad minősített tárgyalásokkal, hogy te csak zárni gyere.</p>
+    <div class="fu" style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:34px;">
+      <span class="pill">Célzott lista</span><span class="acc">→</span>
+      <span class="pill">Személyre szabott megkeresés</span><span class="acc">→</span>
+      <span class="pill">Foglalás</span><span class="acc">→</span>
+      <span class="pill" style="background:var(--air);color:var(--ink);border-color:var(--air);">Minősített tárgyalás</span>
+    </div>
+    <div class="grid3 fu" style="margin-top:34px;text-align:left;">
+      <div class="card"><h4 class="acc" style="margin-bottom:12px;">1. pillér: Célzott listaépítés</h4><ul class="lst" style="font-size:14px;"><li><span class="ic acc">›</span>ICP-alapú szegmentálás</li><li><span class="ic acc">›</span>Verifikált kontaktok</li><li><span class="ic acc">›</span>Napi frissítés</li></ul></div>
+      <div class="card"><h4 class="acc" style="margin-bottom:12px;">2. pillér: Személyre szabott kampány</h4><ul class="lst" style="font-size:14px;"><li><span class="ic acc">›</span>Személyre szabott első üzenet</li><li><span class="ic acc">›</span>Multi-channel szekvencia</li><li><span class="ic acc">›</span>Válasz-triage</li></ul></div>
+      <div class="card"><h4 class="acc" style="margin-bottom:12px;">3. pillér: Foglalás &amp; átadás</h4><ul class="lst" style="font-size:14px;"><li><span class="ic acc">›</span>Naptárba foglalás</li><li><span class="ic acc">›</span>Emlékeztetők &amp; no-show kezelés</li><li><span class="ic acc">›</span>CRM-be írás</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7: PILLAR 1 -->
+<section class="slide" data-s="bone" data-sec="1. pillér">
+  <div class="inner">
+    <p class="kick fu">1. pillér</p>
+    <h2 class="fu">Célzott listaépítés, <span class="acc">ami feltölti a pipeline-t</span></h2>
+    <p class="sub fu">A jó lista a kampány 80%-a. Rossz célzásra a legjobb üzenet is elhal.</p>
+    <div class="fu" style="margin-top:30px;display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h4>ICP-alapú core lista</h4><span class="tag" style="background:var(--paper-2);color:var(--deep);">a volumen 45%-a</span></div>
+        <div class="bar"><i style="width:60%;"></i></div>
+        <p class="mut" style="font-size:14.5px;margin-top:12px;">A pontos ICP-d alapján építjük a magot, verifikált döntéshozói kontaktokkal.</p>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h4>Bővített hasonmás-lista</h4><span class="tag" style="background:#f6efe0;color:var(--warn);">a volumen 35%-a</span></div>
+        <div class="bar"><i style="width:30%;background:var(--warn);"></i></div>
+        <p class="mut" style="font-size:14.5px;margin-top:12px;">Pontosan célzott, személyre szabott megkeresés, teljesen menedzselve.</p>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h4>Trigger-alapú lista</h4><span class="tag" style="background:#eef6ee;color:var(--pos);">a volumen 20%-a</span></div>
+        <div class="bar"><i style="width:10%;background:var(--pos);"></i></div>
+        <p class="mut" style="font-size:14.5px;margin-top:12px;">Pontosan célzott, személyre szabott megkeresés, teljesen menedzselve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: PILLAR 2 -->
+<section class="slide" data-s="bone" data-sec="2. pillér">
+  <div class="inner">
+    <p class="kick fu">2. pillér</p>
+    <h2 class="fu">A <span class="acc">személyre szabott kampány</span></h2>
+    <p class="sub fu">Multi-channel, személyre szabott szekvenciák, amelyek választ és foglalást hoznak.</p>
+    <p class="kick fu" style="margin-top:28px;color:var(--mute);">Hogyan működik</p>
+    <div class="fu" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;">
+      <span class="pill">Adatgyűjtés</span><span class="acc">→</span>
+      <span class="pill">Verifikálás</span><span class="acc">→</span>
+      <span class="pill">Szekvencia</span><span class="acc">→</span>
+      <span class="pill" style="background:var(--paper-2);">Foglalás</span>
+    </div>
+    <div class="grid3 fu" style="margin-top:24px;">
+      <div class="card" style="padding:18px;"><p class="tag" style="background:#eef6ee;color:var(--pos);margin-bottom:8px;">01</p><p style="font-size:14px;font-weight:600;">Cégméret</p><p class="mut" style="font-size:13px;margin-top:4px;">10–200 fő</p></div>
+      <div class="card" style="padding:18px;"><p class="tag" style="background:#eef6ee;color:var(--pos);margin-bottom:8px;">02</p><p style="font-size:14px;font-weight:600;">Iparág</p><p class="mut" style="font-size:13px;margin-top:4px;">B2B szolgáltatás</p></div>
+      <div class="card" style="padding:18px;"><p class="tag" style="background:#f6efe0;color:var(--warn);margin-bottom:8px;">03</p><p style="font-size:14px;font-weight:600;">Döntéshozó</p><p class="mut" style="font-size:13px;margin-top:4px;">Ügyvezető / sales vezető</p></div>
+    </div>
+    <p class="kick fu" style="margin-top:28px;color:var(--mute);">A motorháztető alatt</p>
+    <div class="ph fu" style="margin-top:12px;">Képernyőkép: Kampány-dashboard</div>
+  </div>
+</section>
+
+<!-- SLIDE 9: PILLAR 3 -->
+<section class="slide" data-s="bone" data-sec="3. pillér">
+  <div class="inner">
+    <p class="kick fu">3. pillér</p>
+    <h2 class="fu">Foglalás és átadás, <span class="acc">ami lezárja a kört</span></h2>
+    <p class="sub fu">A pozitív válaszokból foglalt, minősített tárgyalás lesz a naptáradban.</p>
+    <div class="grid3 fu" style="margin-top:32px;">
+      <div class="card" style="border-top:3px solid var(--deep);"><h4 style="margin-bottom:8px;">Naptár-integráció</h4><p class="mut" style="font-size:14px;">Verifikált, foglalásra kész lead-ek</p></div>
+      <div class="card" style="border-top:3px solid var(--signal);"><h4 style="margin-bottom:8px;">No-show kezelés</h4><p class="mut" style="font-size:14px;">Heti riport és átláthatóság</p></div>
+      <div class="card" style="border-top:3px solid var(--pos);"><h4 style="margin-bottom:8px;">CRM-átadás</h4><p class="mut" style="font-size:14px;">CRM-integráció</p></div>
+    </div>
+    <div class="grid2 fu" style="margin-top:20px;">
+      <div class="ph">Képernyőkép: Foglalási naptár</div>
+      <div class="ph">Képernyőkép: Pipeline nézet</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 10: BONUSES -->
+<section class="slide" data-s="bone" data-sec="Bónuszok">
+  <div class="inner">
+    <p class="kick fu" style="color:var(--pos);">Ingyen jár</p>
+    <h2 class="fu">Két bónusz <span class="pos">felár nélkül</span></h2>
+    <p class="sub fu">Ezeket külön költség nélkül adjuk.</p>
+    <div class="grid2 fu" style="margin-top:32px;align-items:stretch;">
+      <div class="card" style="border-top:3px solid var(--signal);">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;"><h3>Üzenet-playbook</h3><span class="tag pos" style="background:#eef6ee;">Érték: 900 000 Ft</span></div>
+        <p class="mut" style="font-size:15px;">A bevált, A/B tesztelt üzenet-sablonok, amelyeket örökre megtartasz.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--pos);">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;"><h3>ICP-térkép</h3><span class="tag pos" style="background:#eef6ee;">Érték: 600 000 Ft</span></div>
+        <p class="mut" style="font-size:15px;">A teljes célpiac-térképed, szegmensekre bontva.</p>
+      </div>
+    </div>
+    <div class="ph fu" style="margin-top:20px;">Képernyőkép: Üzenet-playbook</div>
+  </div>
+</section>
+
+<!-- SLIDE 11: TAM & MATH -->
+<section class="slide" data-s="ink" data-sec="A számok">
+  <div class="wm" data-mark="300"></div>
+  <div class="inner">
+    <p class="kick fu">A számok</p>
+    <h2 class="fu">Hogyan jutunk el <span class="acc">30 minősített tárgyalás</span>-ig</h2>
+    <p class="sub fu">A magyar B2B piacon több ezer cég illik a profilodba.</p>
+    <div class="grid2 fu" style="margin-top:30px;align-items:start;">
+      <div>
+        <p class="kick" style="color:var(--mute);margin-bottom:12px;">Teljes elérhető piac (TAM)</p>
+        <div class="ph" style="min-height:170px;">Képernyőkép: Sales Navigator – B2B szolgáltatók, 10–200 fő</div>
+        <div class="grid2" style="margin-top:14px;gap:12px;">
+          <div class="card stat" style="padding:16px;"><div class="n acc tnum">3 200</div><div class="l">core ICP cég</div></div>
+          <div class="card stat" style="padding:16px;"><div class="n tnum">3 200</div><div class="l">Teljes elérhető cég</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h4 style="margin-bottom:16px;text-align:center;">Mit hoz a Növekedési Motor (első 90 nap)</h4>
+        <div class="funnel">
+          <div class="seg" style="width:100%;background:rgba(132,204,22,.16);"><span>Teljes elérhető cég</span><span class="v tnum">3 200</span></div>
+          <div class="seg" style="width:88%;background:rgba(132,204,22,.22);"><span>Megkeresve 90 nap alatt</span><span class="v tnum">2 800</span></div>
+          <div class="seg" style="width:70%;background:rgba(132,204,22,.30);"><span>Pozitív válaszok 8%-on</span><span class="v tnum">224</span></div>
+          <div class="seg" style="width:54%;background:rgba(132,204,22,.42);color:var(--ink);"><span>Lefoglalt minősített tárgyalás</span><span class="v tnum">30</span></div>
+          <div class="seg" style="width:40%;background:var(--air);color:var(--ink);"><span>Új ügyfél 2,5%-on</span><span class="v tnum">6</span></div>
+        </div>
+        <div class="row" style="margin-top:14px;"><span>Első éves bevétel 1,4M Ft/ügyfél mellett</span><span class="v acc tnum">8,4M Ft</span></div>
+        <div class="row"><span><strong>Élettartam-érték</strong></span><span class="v acc tnum" style="font-size:18px;">25,2M Ft</span></div>
+      </div>
+    </div>
+    <div class="card fu" style="margin-top:20px;border-left:4px solid var(--air);">
+      <p class="lede"><strong>Garantáljuk a 20 minősített tárgyalás-t alsó határként. A matek 30-at-t mond.</strong> A piac elég nagy, a korlát csak a kimenő kapacitás, amit mi adunk.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 12: CASE STUDIES -->
+<section class="slide" data-s="bone" data-sec="Bizonyíték">
+  <div class="inner">
+    <p class="kick fu">Bizonyíték</p>
+    <h2 class="fu">A Targetive Növekedési Motor <span class="acc">a gyakorlatban</span></h2>
+    <p class="sub fu">Valós eredmények valós cégektől.</p>
+    <div class="grid2 fu" style="margin-top:32px;align-items:start;">
+      <div class="card">
+        <p class="tag" style="background:var(--paper-2);color:var(--deep);margin-bottom:12px;">Esettanulmány</p>
+        <h3 class="acc" style="margin-bottom:4px;">Sió-Consulting</h3>
+        <p class="mut" style="margin-bottom:16px;">B2B tanácsadás</p>
+        <p class="quote">„Végre kiszámítható a pipeline-unk.”</p>
+        <ul class="lst" style="margin-top:16px;font-size:14.5px;">
+          <li><span class="ic acc">▲</span><strong>47×</strong> ROI a kampányon</li>
+          <li><span class="ic acc">▲</span>47× ROI az első évben</li>
+          <li><span class="ic acc">▲</span>3 hónap alatt megtérült</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="tag" style="background:#eef6ee;color:var(--pos);margin-bottom:12px;">Esettanulmány</p>
+        <h3 class="pos" style="margin-bottom:4px;">CARRIES</h3>
+        <p class="mut" style="margin-bottom:16px;">B2B szolgáltatás</p>
+        <p class="quote" style="border-color:var(--pos);">„3 hónap alatt megtelt a naptárunk.”</p>
+        <ul class="lst" style="margin-top:16px;font-size:14.5px;">
+          <li><span class="ic pos">▲</span><strong>197×</strong> ROI</li>
+          <li><span class="ic pos">▲</span>18 új tárgyalás / hó</li>
+          <li><span class="ic pos">▲</span>0 elvesztegetett admin-óra</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 13: ANCHOR HIGH -->
+<section class="slide" data-s="ink" data-sec="Az alternatíva">
+  <div class="inner">
+    <p class="kick fu" style="color:#e8927a;">Az alternatíva</p>
+    <h2 class="fu">Mennyibe kerül, <span style="color:#e8927a;">ha magad építed fel</span></h2>
+    <p class="sub fu">Ennyi kell ahhoz, hogy ezt a nulláról felépítsd.</p>
+    <div class="card fu" style="margin-top:30px;">
+      <div class="row"><span>2 fő SDR teljes állásban</span><span class="v neg" style="color:#e8927a;">24M Ft/év</span></div>
+      <div class="row"><span>Szoftverek és eszközök</span><span class="v neg" style="color:#e8927a;">3,6M Ft/év</span></div>
+      <div class="row"><span>Adat és listák</span><span class="v neg" style="color:#e8927a;">1,8M Ft/év</span></div>
+      <div class="row"><span>Vezetői idő és menedzsment</span><span class="v neg" style="color:#e8927a;">2,4M Ft/év</span></div>
+      <div class="row"><span>Tesztelés és ráfordult idő</span><span class="v neg" style="color:#e8927a;">1,2M Ft/év</span></div>
+      <div class="row"><span>A te időd tanulásra, építésre, menedzselésre</span><span class="v neg" style="color:#e8927a;">480 óra</span></div>
+    </div>
+    <div class="card fu tint-neg" style="margin-top:20px;text-align:center;">
+      <p class="kick" style="justify-content:center;color:#e8927a;">Teljes költség, ha magad építed</p>
+      <p class="bignum" style="color:#e8927a;margin-top:12px;">33M Ft</p>
+      <p class="sub" style="margin:8px auto 0;">Évente. Plusz 6 hónap az első eredményig.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 14: VALUE STACK -->
+<section class="slide" data-s="bone" data-sec="Az értékcsomag">
+  <div class="inner">
+    <p class="kick fu">Amit kapsz</p>
+    <h2 class="fu">Az <span class="acc">értékcsomag</span></h2>
+    <p class="sub fu">Minden elem, pillérenként csoportosítva.</p>
+    <div class="grid2 fu" style="margin-top:30px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card" style="padding:20px;">
+          <p class="tag" style="background:var(--paper-2);color:var(--deep);margin-bottom:12px;">1. pillér: Célzott listaépítés</p>
+          <div class="row" style="padding:8px 0;"><span>Célzott lista (1 000+ cég)</span><span class="v pos">1,2M Ft</span></div>
+          <div class="row" style="padding:8px 0;"><span>Verifikált emailek</span><span class="v pos">800 000 Ft</span></div>
+          <div class="row" style="padding:8px 0;"><span>Napi MV-verifikáció</span><span class="v pos">600 000 Ft</span></div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <p class="tag" style="background:#eef6ee;color:var(--pos);margin-bottom:12px;">Ingyenes bónuszok</p>
+          <div class="row" style="padding:8px 0;"><span>Üzenet-playbook</span><span class="v pos">900 000 Ft</span></div>
+          <div class="row" style="padding:8px 0;"><span>ICP-térkép</span><span class="v pos">600 000 Ft</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card" style="padding:20px;">
+          <p class="tag" style="background:#eef6ee;color:var(--pos);margin-bottom:12px;">2. pillér: Személyre szabott kampány</p>
+          <div class="row" style="padding:8px 0;"><span>Multi-channel szekvencia</span><span class="v pos">1,4M Ft</span></div>
+          <div class="row" style="padding:8px 0;"><span>A/B tesztelt üzenetek</span><span class="v pos">700 000 Ft</span></div>
+          <div class="row" style="padding:8px 0;"><span>Válasz-triage</span><span class="v pos">500 000 Ft</span></div>
+        </div>
+        <div class="card tint-pos" style="padding:24px;text-align:center;">
+          <p class="kick" style="justify-content:center;color:var(--pos);">Teljes érték</p>
+          <p class="bignum pos" style="margin-top:10px;">7,2M Ft</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 15: GUARANTEE -->
+<section class="slide" data-s="deep" data-sec="A garancia">
+  <div class="wm" data-mark="300"></div>
+  <div class="inner" style="text-align:center;">
+    <p class="kick fu" style="justify-content:center;">Nulla kockázat</p>
+    <h2 class="fu" style="margin-left:auto;margin-right:auto;">A garancia</h2>
+    <div class="fu" style="display:flex;justify-content:center;gap:0;margin-top:36px;flex-wrap:wrap;">
+      <div style="padding:0 48px;border-right:1px solid rgba(255,255,255,.18);">
+        <p class="bignum acc">20+</p>
+        <p style="font-weight:600;margin-top:12px;">minősített<br>tárgyalás</p>
+      </div>
+      <div style="padding:0 48px;">
+        <p class="bignum acc">90</p>
+        <p style="font-weight:600;margin-top:12px;">90 nap vagy<br>visszatérítés</p>
+      </div>
+    </div>
+    <div class="card fu" style="margin-top:36px;max-width:760px;margin-left:auto;margin-right:auto;">
+      <p class="lede" style="font-size:19px;">Garantálunk 20 minősített tárgyalást 90 nap alatt. Ha nem teljesül, addig dolgozunk díjmentesen, amíg meglesz.</p>
+      <p style="font-size:20px;font-weight:800;margin-top:16px;">A kockázat teljes egészében a miénk.</p>
+    </div>
+    <p class="fu mut" style="margin-top:18px;font-size:14px;">Minősített = a döntéshozóval egyeztetett, naptárba foglalt, megjelent tárgyalás.</p>
+  </div>
+</section>
+
+<!-- SLIDE 16: PRICE -->
+<section class="slide" data-s="bone" data-sec="Az ár">
+  <div class="inner" style="text-align:center;">
+    <p class="kick fu" style="justify-content:center;">Befektetés</p>
+    <h2 class="fu" style="margin-left:auto;margin-right:auto;">Az ár</h2>
+    <div class="grid2 fu" style="margin-top:32px;align-items:stretch;text-align:left;">
+      <div class="card" style="display:flex;flex-direction:column;justify-content:center;opacity:.55;">
+        <p class="kick" style="color:var(--mute);">Ennyibe kerül havonta házon belül</p>
+        <p class="bignum neg" style="font-size:56px;margin-top:10px;"><span style="text-decoration:line-through;">2,8M Ft</span><span style="font-size:20px;color:var(--mute);">/hó</span></p>
+        <p class="mut" style="margin-top:10px;">2 SDR + eszközök + adat – minden hónapban, örökké</p>
+      </div>
+      <div class="price-feat">
+        <span class="price-badge">Egyszeri setup + retainer</span>
+        <p class="kick" style="color:var(--deep);margin-top:6px;">Te egyszer fizetsz</p>
+        <p class="bignum acc" style="font-size:64px;margin-top:8px;">3,9M Ft</p>
+        <p class="mut" style="margin-top:10px;">Egyszeri telepítés. Havonta termel. Mindent te birtokolsz.</p>
+      </div>
+    </div>
+    <div class="card fu" style="margin-top:18px;text-align:left;">
+      <div class="grid2">
+        <ul class="lst" style="font-size:14.5px;"><li><span class="ic pos">✓</span>Teljes lista-build</li><li><span class="ic pos">✓</span>Személyre szabott szekvenciák</li><li><span class="ic pos">✓</span>Foglalt tárgyalások</li><li><span class="ic pos">✓</span>Heti riport</li></ul>
+        <ul class="lst" style="font-size:14.5px;"><li><span class="ic pos">✓</span>Dedikált kampánymenedzser</li><li><span class="ic pos">✓</span>Heti optimalizálás</li><li><span class="ic pos">✓</span>Teljes adat-tulajdonjog</li><li><span class="ic pos">✓</span>Skálázható infrastruktúra</li></ul>
+      </div>
+    </div>
+    <div class="card fu tint-pos" style="margin-top:14px;"><p style="font-size:15px;"><strong>Kockázatfordítás:</strong> 20 tárgyalás 90 nap alatt, vagy díjmentes utánkövetés.</p></div>
+    <div class="card fu" style="margin-top:12px;"><p class="mut" style="font-size:14px;"><strong style="color:var(--ink);">Az első 90 nap után:</strong> opcionális folytatás 900 000 Ft/hó retainerrel.</p></div>
+  </div>
+</section>
+
+<!-- SLIDE 17: ROI -->
+<section class="slide" data-s="bone" data-sec="A matek">
+  <div class="inner" style="text-align:center;">
+    <p class="kick fu" style="justify-content:center;">A matek</p>
+    <h2 class="fu" style="margin-left:auto;margin-right:auto;">Megtérülés (<span class="acc">ROI</span>)</h2>
+    <p class="sub fu" style="margin-left:auto;margin-right:auto;text-align:center;">A(z) 2026.06.18-kor megadott számaid alapján.</p>
+    <div class="grid3 fu" style="margin-top:28px;">
+      <div class="card stat" style="padding:18px;"><div class="n acc tnum">1,4M Ft</div><div class="l">Egy ügyfél értéke</div></div>
+      <div class="card stat" style="padding:18px;"><div class="n warn tnum">3 év</div><div class="l">Megtartásod (4,2M Ft LTV)</div></div>
+      <div class="card stat" style="padding:18px;"><div class="n pos tnum">22%</div><div class="l">Zárási arányod</div></div>
+    </div>
+    <div class="fu col-bars" style="margin-top:34px;max-width:760px;margin-left:auto;margin-right:auto;height:230px;">
+      <div class="col"><div class="fill" style="height:34%;background:#c9d6b0;color:var(--ink);">8x</div><span class="mut" style="font-size:12px;font-weight:700;">Legrosszabb<br>10%</span></div>
+      <div class="col"><div class="fill" style="height:62%;background:var(--signal);">18x</div><span class="mut" style="font-size:12px;font-weight:700;">Konzervatív<br>15%</span></div>
+      <div class="col"><div class="fill" style="height:100%;background:var(--deep);color:#fff;">47x</div><span class="mut" style="font-size:12px;font-weight:700;">A te arányod<br>22%</span></div>
+    </div>
+    <div class="card fu tint-pos" style="margin-top:24px;"><p class="lede"><strong>Zárj le egyetlen ügyfelet, és a teljes befektetés 47×-esen megtérült.</strong></p></div>
+  </div>
+</section>
+
+<!-- SLIDE 18: WORST CASE -->
+<section class="slide" data-s="bone" data-sec="Legrosszabb eset">
+  <div class="inner">
+    <p class="kick fu" style="color:var(--warn);">Abszolút legrosszabb eset</p>
+    <h2 class="fu">Még ha <span class="warn">minden rosszul is sül el</span></h2>
+    <p class="sub fu">Ez akkor is a tiéd marad.</p>
+    <div class="grid2 fu" style="margin-top:32px;">
+      <div class="card" style="border-left:3px solid var(--deep);"><h4 style="margin-bottom:8px;">A célzott adatbázis</h4><p class="mut" style="font-size:14.5px;">Az infrastruktúrát és playbookot véglegesen megtartod.</p></div>
+      <div class="card" style="border-left:3px solid var(--pos);"><h4 style="margin-bottom:8px;">Az üzenet-sablonok</h4><p class="mut" style="font-size:14.5px;">A bevált üzenet-sablonok</p></div>
+      <div class="card" style="border-left:3px solid var(--signal);"><h4 style="margin-bottom:8px;">A kampány-infrastruktúra</h4><p class="mut" style="font-size:14.5px;">A kampány-infrastruktúra</p></div>
+      <div class="card" style="border-left:3px solid var(--warn);"><h4 style="margin-bottom:8px;">A teljes playbook</h4><p class="mut" style="font-size:14.5px;">A teljes playbook</p></div>
+    </div>
+    <div class="card fu tint-pos" style="margin-top:20px;text-align:center;"><p class="lede">Ha csak egyetlen üzletet zársz a pipeline-ból, a teljes befektetés megérte.</p></div>
+  </div>
+</section>
+
+<!-- SLIDE 19: BRUNSON CLOSE -->
+<section class="slide" data-s="ink" data-sec="Megérné?">
+  <div class="wm" data-mark="320"></div>
+  <div class="inner" style="text-align:center;">
+    <h2 class="fu" style="margin-left:auto;margin-right:auto;font-size:54px;">Ha ez csak annyit tenne, hogy…</h2>
+    <div class="grid2 fu" style="margin-top:36px;text-align:left;">
+      <div class="card" style="border-left:4px solid var(--air);"><p class="lede">Ha ez csak annyit tenne, hogy havi 18 új minősített tárgyalást hozna.</p><p class="acc" style="font-weight:800;margin-top:12px;">Megérné?</p></div>
+      <div class="card" style="border-left:4px solid var(--signal);"><p class="lede">Ha ez csak annyit tenne, hogy megszüntetné az ajánlásfüggőséget.</p><p class="acc" style="font-weight:800;margin-top:12px;">Megérné?</p></div>
+      <div class="card" style="border-left:4px solid #e0b066;"><p class="lede">Ha ez csak annyit tenne, hogy levenné a prospektálás terhét a csapatról.</p><p class="acc" style="font-weight:800;margin-top:12px;">Megérné?</p></div>
+      <div class="card" style="border-left:4px solid #7fd0c0;"><p class="lede">Ha ez csak annyit tenne, hogy kiszámíthatóvá tenné a növekedést.</p><p class="acc" style="font-weight:800;margin-top:12px;">Megérné?</p></div>
+    </div>
+    <p class="fu mut" style="margin-top:22px;">Mindezt megteszi. És még többet.</p>
+  </div>
+</section>
+
+<!-- SLIDE 20: TIMELINE -->
+<section class="slide" data-s="bone" data-sec="Ütemterv">
+  <div class="inner">
+    <p class="kick fu">Következő lépések</p>
+    <h2 class="fu">A(z) 90 napos <span class="acc">ütemterv</span></h2>
+    <p class="sub fu">Pontosan ez történik, miután igent mondasz.</p>
+    <div class="tl fu" style="margin-top:30px;">
+      <div class="step"><div class="when">1–14. NAP</div><div><h4 style="margin-bottom:6px;">Onboarding és ICP-lock</h4><p class="mut" style="font-size:14.5px;">Felmérjük az ICP-t, hozzáférések, kickoff.</p></div></div>
+      <div class="step"><div class="when">15–45. NAP</div><div><h4 style="margin-bottom:6px;">Lista és üzenet</h4><p class="mut" style="font-size:14.5px;">Lista-build és üzenet-írás, jóváhagyásra.</p></div></div>
+      <div class="step"><div class="when" style="color:var(--warn);">60. NAP</div><div><h4 style="margin-bottom:6px;">Élesítés – első foglalások</h4><p class="mut" style="font-size:14.5px;">Élesítés, első válaszok és foglalások.</p></div></div>
+      <div class="step"><div class="when" style="color:var(--pos);">61–90. NAP</div><div><h4 style="margin-bottom:6px;">Skálázás és optimalizálás</h4><p class="mut" style="font-size:14.5px;">Skálázás a legjobban teljesítő szegmensre.</p></div></div>
+      <div class="step"><div class="when" style="color:var(--pos);">90. NAP</div><div><h4 style="margin-bottom:6px;">Riport és folytatás</h4><p class="mut" style="font-size:14.5px;">Teljes riport, eredmények, döntés a folytatásról.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 21: SUMMARY + FAQ -->
+<section class="slide" data-s="ink" data-sec="Összegzés">
+  <div class="inner">
+    <div class="fu" style="text-align:center;margin-bottom:24px;">
+      <div style="display:flex;justify-content:center;margin-bottom:14px;" data-mark="40"></div>
+      <h2 style="font-size:36px;margin:0 auto;">Carries <span class="acc">Növekedési Motor</span></h2>
+      <p class="sub" style="margin:8px auto 0;text-align:center;">Minden, amire szükséged van. Egy befektetés. Kamatozó eredmények.</p>
+    </div>
+    <div class="card fu grid3" style="align-items:center;gap:28px;">
+      <div style="text-align:center;"><p class="kick" style="justify-content:center;color:#e8927a;">A tétlenség ára</p><p class="bignum" style="font-size:42px;color:#e8927a;margin-top:8px;">2,8M<span style="font-size:15px;color:var(--mute);">/hó</span></p></div>
+      <div style="text-align:center;border-left:1px solid var(--line-d);border-right:1px solid var(--line-d);"><p class="kick" style="justify-content:center;">A befektetésed</p><p class="bignum acc" style="font-size:42px;margin-top:8px;">3,9M Ft</p></div>
+      <div style="text-align:center;"><p class="kick" style="justify-content:center;color:var(--pos);">Első éves ROI</p><p class="bignum pos" style="font-size:42px;margin-top:8px;">47x</p></div>
+    </div>
+    <div class="grid2 fu" style="margin-top:18px;align-items:start;">
+      <div class="card">
+        <h4 style="margin-bottom:12px;">Amit kapsz</h4>
+        <ul class="lst" style="font-size:13.5px;gap:7px;">
+          <li><span class="ic pos">✓</span>Célzott listaépítés</li><li><span class="ic pos">✓</span>Verifikált kontakt-adatbázis</li>
+          <li><span class="ic pos">✓</span>Multi-channel kampány</li><li><span class="ic pos">✓</span>Foglalt tárgyalások a naptáradban</li>
+          <li><span class="ic pos">✓</span>Heti teljesítmény-riport</li><li><span class="ic pos">✓</span>Teljes adat-tulajdonjog</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="margin-bottom:12px;">Egy pillantásra</h4>
+        <div class="row" style="font-size:14px;"><span>A semmittevés ára</span><span class="v" style="color:#e8927a;">33,6M Ft/év</span></div>
+        <div class="row" style="font-size:14px;"><span>A befektetésed</span><span class="v acc">3,9M Ft</span></div>
+        <div class="row" style="font-size:14px;"><span>minősített tárgyalás garantálva</span><span class="v pos">20+</span></div>
+        <div class="row" style="font-size:14px;"><span>Bevezetési idő</span><span class="v">14 nap</span></div>
+        <div class="row" style="font-size:14px;"><span>Tulajdonjog</span><span class="v pos">100% a tiéd</span></div>
+      </div>
+    </div>
+    <div class="card fu tint-pos" style="margin-top:16px;text-align:center;"><p style="font-size:15px;"><strong>20+ minősített tárgyalás 90 nap alatt, vagy visszatérítjük a setup díjat. A kockázat teljes egészében a miénk.</strong></p></div>
+    <div class="fu" style="margin-top:18px;">
+      <details class="acc-item"><summary>Mennyi munkám lesz vele?</summary><div class="body">A teljes infrastruktúra a miénk, neked nulla setup-munkád van.</div></details>
+      <details class="acc-item"><summary>Mi van, ha leállunk?</summary><div class="body">Igen, a teljes adatbázist és a sablonokat megtartod, akkor is, ha leállunk.</div></details>
+      <details class="acc-item"><summary>Mikor jönnek az első eredmények?</summary><div class="body">Az első foglalások jellemzően a 3–4. héten érkeznek.</div></details>
+      <details class="acc-item"><summary>GDPR-konform a megkeresés?</summary><div class="body">Magyar piacra, GDPR-konform, role-alapú megkereséssel dolgozunk.</div></details>
+      <details class="acc-item"><summary>Mi a garancia?</summary><div class="body">A garancia alsó határa 20 tárgyalás 90 nap alatt, különben visszatérítünk.</div></details>
+    </div>
+    <p class="fu mut" style="text-align:center;margin-top:18px;font-size:13px;">Készítette: targetive.ai &middot; targetive.ai</p>
+  </div>
+</section>
+
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="idx" id="idx">01 / 21</div>
+<div class="sec" id="sec"></div>
+
+<script>
+(function(){
+  var MARK='M 265.472656 93.035156 C 266.230469 93.40625 265.875 98.761719 265.871094 100 L 265.910156 109.679688 L 265.847656 139.339844 L 265.855469 231.117188 C 255.441406 231.03125 245.027344 231.03125 234.613281 231.113281 C 228.617188 231.152344 222.746094 231.023438 216.738281 231.167969 L 216.71875 194.632812 C 216.71875 192.652344 217.027344 184.640625 216.726562 183.34375 C 215.417969 183.921875 206.765625 192.984375 205.140625 194.609375 L 174.3125 225.699219 C 173.363281 226.667969 169.554688 230.148438 169.273438 231.085938 L 169.476562 231.378906 C 171.511719 231.699219 178.550781 231.320312 181.226562 231.371094 C 192.949219 231.570312 204.789062 231.265625 216.511719 231.441406 C 216.34375 248.210938 216.636719 265.039062 216.519531 281.796875 L 192.371094 281.800781 C 183.484375 281.894531 174.597656 281.867188 165.714844 281.722656 C 143.0625 280.140625 125.703125 263.816406 121.261719 241.765625 C 118.445312 227.585938 121.941406 212.882812 130.835938 201.488281 C 132.800781 198.984375 135.027344 196.785156 137.234375 194.496094 C 140.621094 190.980469 144.039062 187.488281 147.480469 184.023438 L 173.546875 157.765625 C 176.898438 154.398438 180.246094 151.019531 183.605469 147.65625 C 184.308594 146.953125 186.066406 145.507812 185.851562 144.550781 C 180.941406 144.242188 173.671875 144.558594 168.550781 144.558594 L 134.480469 144.5 C 134.136719 132.773438 134.644531 120.800781 134.441406 109.050781 C 134.351562 103.890625 134.332031 98.261719 134.613281 93.136719 L 224.503906 93.105469 L 250.949219 93.113281 C 255.679688 93.109375 260.761719 93.195312 265.472656 93.035156 Z';
+  function svg(size,fill){var w=Math.round(size*0.715);return '<svg viewBox="120 93 135 189" width="'+w+'" height="'+size+'" aria-hidden="true"><path fill="'+fill+'" d="'+MARK+'"/></svg>';}
+  // brand tag top-left
+  document.getElementById('brandtag').innerHTML=svg(22,'#84CC16')+'<span>targetive.ai</span>';
+  // inject marks
+  document.querySelectorAll('[data-mark]').forEach(function(el){
+    var s=parseInt(el.getAttribute('data-mark'),10);
+    var dark=el.closest('.slide')&&['ink','deep'].indexOf(el.closest('.slide').getAttribute('data-s'))>-1;
+    el.innerHTML=svg(s, dark?'#A3E635':'#84CC16');
+  });
+
+  var deck=document.getElementById('deck');
+  var slides=deck.querySelectorAll('.slide');
+  var total=slides.length, cur=1;
+  var dots=document.getElementById('dots');
+  var idx=document.getElementById('idx');
+  var sec=document.getElementById('sec');
+  var progress=document.getElementById('progress');
+  for(var i=1;i<=total;i++){(function(n){var d=document.createElement('div');d.className='dot'+(n===1?' active':'');d.onclick=function(){go(n);};dots.appendChild(d);})(i);}
+  function pad(n){return (n<10?'0':'')+n;}
+  function go(n){
+    if(n<1||n>total)return;
+    slides[cur-1].classList.remove('active');
+    slides[n-1].classList.add('active');
+    slides[n-1].scrollTop=0;
+    dots.children[cur-1].classList.remove('active');
+    dots.children[n-1].classList.add('active');
+    idx.textContent=pad(n)+' / '+pad(total);
+    sec.textContent=slides[n-1].getAttribute('data-sec')||'';
+    progress.style.width=(n/total*100)+'%';
+    var d=slides[n-1].getAttribute('data-s');
+    var darkChrome=(d==='ink'||d==='deep');
+    idx.style.color=darkChrome?'rgba(245,247,240,.6)':'var(--mute)';
+    sec.style.color=darkChrome?'rgba(245,247,240,.55)':'var(--mute)';
+    document.getElementById('brandtag').style.color=darkChrome?'#fff':'var(--ink)';
+    cur=n;
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(cur+1);}
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(cur-1);}
+  });
+  var tx=0;
+  document.addEventListener('touchstart',function(e){tx=e.changedTouches[0].screenX;},{passive:true});
+  document.addEventListener('touchend',function(e){var diff=tx-e.changedTouches[0].screenX;if(Math.abs(diff)>50){diff>0?go(cur+1):go(cur-1);}},{passive:true});
+  // init
+  sec.textContent=slides[0].getAttribute('data-sec')||'';
+  progress.style.width=(1/total*100)+'%';
+  document.getElementById('brandtag').style.color='#fff';
+  idx.style.color='rgba(245,247,240,.6)';sec.style.color='rgba(245,247,240,.55)';
+})();
+</script>
+</body>
+</html>
