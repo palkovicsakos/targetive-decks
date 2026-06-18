@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mkt-hu-copy — Live vs Proposed Review</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222;
+    --border: #333;
+    --text: #e8e8e8;
+    --muted: #888;
+    --accent: #085CF0;
+    --approve: #22c55e;
+    --flag: #f59e0b;
+    --block: #ef4444;
+    --live-bg: #1c1a14;
+    --live-border: #4a3f20;
+    --prop-bg: #0f1c14;
+    --prop-border: #1e4a2a;
+    --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 28px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left h1 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .header-left .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .chip {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1px solid;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .chip-warn { border-color: var(--flag); color: var(--flag); background: rgba(245,158,11,0.08); }
+  .chip-info { border-color: var(--accent); color: #5b9cf6; background: rgba(8,92,240,0.1); }
+  .chip-ok   { border-color: var(--approve); color: var(--approve); background: rgba(34,197,94,0.08); }
+  .chip-err  { border-color: var(--block); color: var(--block); background: rgba(239,68,68,0.08); }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #progress-label {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  #export-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    white-space: nowrap;
+  }
+  #export-btn:hover { background: #0748c4; }
+  #export-btn:disabled { opacity: 0.4; cursor: default; }
+
+  /* ─── SCORE BANNER ─── */
+  .score-banner {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 28px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .score-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .score-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .score-before {
+    font-size: 13px;
+    color: var(--block);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .score-arrow { font-size: 11px; color: var(--muted); }
+  .score-after {
+    font-size: 13px;
+    color: var(--approve);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .score-delta {
+    font-size: 11px;
+    color: #22c55e;
+    background: rgba(34,197,94,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-weight: 600;
+  }
+  .score-delta-neg {
+    color: var(--approve);
+  }
+  .score-note {
+    font-size: 11px;
+    color: var(--muted);
+    border-left: 2px solid var(--border);
+    padding-left: 12px;
+    max-width: 340px;
+    line-height: 1.4;
+  }
+
+  /* ─── PREAMBLE ─── */
+  .preamble {
+    background: rgba(8,92,240,0.06);
+    border-bottom: 1px solid rgba(8,92,240,0.15);
+    padding: 14px 28px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .preamble strong { color: var(--text); }
+  .preamble a { color: #5b9cf6; text-decoration: none; }
+  .gate-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .gate-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .gate-item .gate-icon { font-size: 14px; }
+
+  /* ─── PAIR CARD ─── */
+  .pairs-container {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .pair-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .pair-header {
+    padding: 12px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pair-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .pair-brief {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    max-width: 520px;
+  }
+  .pair-verdict-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .verdict-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s;
+    background: transparent;
+  }
+  .verdict-btn-approve {
+    border-color: var(--approve);
+    color: var(--approve);
+  }
+  .verdict-btn-approve:hover,
+  .verdict-btn-approve.active {
+    background: var(--approve);
+    color: #000;
+  }
+  .verdict-btn-flag {
+    border-color: var(--flag);
+    color: var(--flag);
+  }
+  .verdict-btn-flag:hover,
+  .verdict-btn-flag.active {
+    background: var(--flag);
+    color: #000;
+  }
+  .verdict-status {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .pair-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 820px) {
+    .pair-columns { grid-template-columns: 1fr; }
+  }
+  .col-live {
+    background: var(--live-bg);
+    border-right: 1px solid var(--border);
+    padding: 16px 18px;
+  }
+  .col-proposed {
+    background: var(--prop-bg);
+    padding: 16px 18px;
+  }
+  .col-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .col-label-live { color: #b08d3a; }
+  .col-label-proposed { color: #4ade80; }
+  .col-tag {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .tag-live { background: rgba(176,141,58,0.15); color: #b08d3a; border: 1px solid rgba(176,141,58,0.3); }
+  .tag-proposed { background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.25); }
+  .copy-block {
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-block .bold { font-weight: 700; color: var(--text); }
+  .delta-note {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    border: 1px solid;
+  }
+  .delta-note-live {
+    background: rgba(176,141,58,0.06);
+    border-color: rgba(176,141,58,0.2);
+    color: #c9a84c;
+  }
+  .delta-note-proposed {
+    background: rgba(74,222,128,0.05);
+    border-color: rgba(74,222,128,0.2);
+    color: #4ade80;
+  }
+  .delta-note strong { font-weight: 700; }
+
+  /* ─── FLAG TEXTAREA ─── */
+  .flag-row {
+    padding: 12px 16px;
+    background: rgba(245,158,11,0.04);
+    border-top: 1px solid rgba(245,158,11,0.15);
+    display: none;
+  }
+  .flag-row.visible { display: block; }
+  .flag-row label {
+    font-size: 11px;
+    color: var(--flag);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .flag-row textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 8px 10px;
+    resize: vertical;
+    min-height: 64px;
+    line-height: 1.5;
+  }
+  .flag-row textarea:focus { outline: none; border-color: var(--flag); }
+
+  /* ─── GATE SECTION ─── */
+  .gate-section {
+    padding: 24px 28px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .gate-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .gate-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.6;
+    max-width: 640px;
+  }
+  .gate-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .gate-row-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .gate-row-item .gate-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .gate-row-item .gate-check.checked {
+    border-color: var(--approve);
+    background: rgba(34,197,94,0.15);
+    color: var(--approve);
+  }
+  .gate-row-item .gate-text {
+    font-size: 12.5px;
+    color: var(--text);
+    flex: 1;
+  }
+  .gate-row-item .gate-text span {
+    color: var(--muted);
+    font-size: 11.5px;
+  }
+  .gate-row-item .gate-status {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .gate-row-item.gate-open { border-color: rgba(245,158,11,0.3); }
+  .gate-row-item.gate-closed { border-color: rgba(34,197,94,0.25); }
+
+  /* ─── EXPORT MODAL ─── */
+  #export-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  #export-modal.visible { display: flex; }
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 680px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-body {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .modal-textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 12px;
+    resize: vertical;
+    min-height: 240px;
+    line-height: 1.5;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .btn-copy {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-copy:hover { background: #0748c4; }
+  .btn-cancel {
+    background: none;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .btn-cancel:hover { color: var(--text); }
+
+  .pair-card.approved { border-color: rgba(34,197,94,0.35); }
+  .pair-card.flagged  { border-color: rgba(245,158,11,0.35); }
+
+  .sep { height: 1px; background: var(--border); margin: 0 28px; }
+  .footer {
+    padding: 20px 28px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+  }
+  .footer strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<div class="header">
+  <div class="header-left">
+    <h1>mkt-hu-copy — Live vs Proposed Review</h1>
+    <div class="subtitle">Review gate pack — skill upgrade 2026-06-18 · Approve to promote / Flag to hold</div>
+    <div class="chips">
+      <span class="chip chip-warn">PROPOSAL — live skill untouched</span>
+      <span class="chip chip-info">4 rounds · 84 generations · writer ≠ judge (decorrelated)</span>
+      <span class="chip chip-ok">R3: overall 8.5 · zero FLOOR errors</span>
+      <span class="chip chip-err">R4 floor regression: 1 aki-for-company (patch pending)</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <span id="progress-label">0 / 10 judged</span>
+    <button id="export-btn" disabled>Export verdict →</button>
+  </div>
+</div>
+
+<!-- ─── SCORE BANNER ─── -->
+<div class="score-banner">
+  <div class="score-item">
+    <div class="score-label">Overall</div>
+    <div class="score-row">
+      <span class="score-before">~6.0</span>
+      <span class="score-arrow">→</span>
+      <span class="score-after">8.5</span>
+      <span class="score-delta">+2.5</span>
+    </div>
+  </div>
+  <div class="score-item">
+    <div class="score-label">native_voice</div>
+    <div class="score-row">
+      <span class="score-before">~6.0</span>
+      <span class="score-arrow">→</span>
+      <span class="score-after">8.6</span>
+      <span class="score-delta">+2.6</span>
+    </div>
+  </div>
+  <div class="score-item">
+    <div class="score-label">no_slop</div>
+    <div class="score-row">
+      <span class="score-before">~3.5</span>
+      <span class="score-arrow">→</span>
+      <span class="score-after">8.4</span>
+      <span class="score-delta">+4.9</span>
+    </div>
+  </div>
+  <div class="score-item">
+    <div class="score-label">persuasion</div>
+    <div class="score-row">
+      <span class="score-before">~7.0</span>
+      <span class="score-arrow">→</span>
+      <span class="score-after">8.3</span>
+      <span class="score-delta">+1.3</span>
+    </div>
+  </div>
+  <div class="score-item">
+    <div class="score-label">brand_fit</div>
+    <div class="score-row">
+      <span class="score-before">~7.5</span>
+      <span class="score-arrow">→</span>
+      <span class="score-after">8.5</span>
+      <span class="score-delta">+1.0</span>
+    </div>
+  </div>
+  <div class="score-item">
+    <div class="score-label">FLOOR errors / batch</div>
+    <div class="score-row">
+      <span class="score-before">4</span>
+      <span class="score-arrow">→</span>
+      <span class="score-after">0</span>
+      <span class="score-delta score-delta-neg">−4</span>
+    </div>
+  </div>
+  <div class="score-note">
+    Pre-upgrade baseline = ESTIMATE from audit on live skill (decorrelated Opus 4.1 judge, 5 samples).
+    R3 = best clean scored round. R4 re-introduced 1 floor error — one patch pending before §3.3 calibration.
+  </div>
+</div>
+
+<!-- ─── PREAMBLE ─── -->
+<div class="preamble">
+  <strong>What you're judging:</strong> 10 side-by-side pairs — left column = output from the <strong>live SKILL.md</strong> (KB-anchored v2, last-modified 2026-06-15), right column = output from the <strong>PROPOSED upgrade</strong> (v3 few-shot-first, R3 revision). Same brief, same brand (Targetive AI, tegező). All copy is <strong>UNVERIFIED DRAFT</strong> — nothing ships until you approve.
+  <br><br>
+  <strong>Your job:</strong> for each pair, gut-check: <em>"Would I send the proposed version as my own voice?"</em> Approve if yes. Flag if anything feels off — leave a note. This is the §3.3 calibration spot-check. ≥ 9/10 Approve = gate crossed. The export button at the top assembles your verdict to paste back.
+  <div class="gate-row">
+    <div class="gate-item"><span class="gate-icon">🔴</span> Live skill NOT replaced until you click Approve-replace-live below</div>
+    <div class="gate-item"><span class="gate-icon">⚠️</span> R4 floor regression: 1 aki-for-company patch still pending (SKILL-PROPOSED.md, 5 min)</div>
+    <div class="gate-item"><span class="gate-icon">ℹ️</span> Writer ≠ judge in all 4 rounds (decorrelated claude -p)</div>
+  </div>
+</div>
+
+<!-- ─── PAIRS ─── -->
+<div class="pairs-container" id="pairs-container">
+
+  <!-- PAIR 1 — Cold email opener -->
+  <div class="pair-card" id="pair-1">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 1 — Cold email opener (CE-01)</div>
+        <div class="pair-brief">First-touch cold email, HU B2B CEO ICP, permission open + diagnose pipeline + 20-min call CTA + "Jó munkát" sign-off · 80–110 words</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(1,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(1,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-1">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">Tárgy: Eleged van abból, hogy a pipeline az ajánlásokon múlik?
+
+Szia {{first_name}},
+
+A legtöbb B2B szolgáltatónál, akivel beszélek, az új ügyfelek 70–80%-a régi ügyfélből vagy ajánlásból jön. Ez jól működik egészen addig, amíg egy nagy ügyfél el nem megy, és akkor a pipeline egyik napról a másikra kiürül.
+
+A probléma általában nem az ajánlattal van, hanem azzal, hogy az aktív ügyfélszerzés — a listázás, a megkeresés, az utánkövetés — legtöbbször a legterheltebb emberre vár.
+
+Szívesen megnézzük együtt, hogy nálad hogyan fest a helyzet. Érdekel egy 20 perces hívás?
+
+Üdvözlettel,
+Palkovics Ákos</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> Grammatically clean but safe-cadence AI — complete sentences throughout, no fragments, no attitude spike, <em>Üdvözlettel</em> sign-off (formal, not peer), no dry irony, pattern-matching the KB §F lexical levers rather than Ákos's voice.</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · R3 · n1</span></div>
+        <div class="copy-block">Tárgy: honnan jönnek a {{company_name}} új ügyfelei?
+
+Megkérdezhetem: most honnan jönnek a {{company_name}} új ügyfelei?
+
+A legtöbb szolgáltatónál, akivel beszélek, kb. így néz ki: a bevétel nagy része régi ügyfélből és ajánlásból jön. Ami jó. Amíg be nem lassul. Mert ha egy nagy ügyfél kilép, vagy az ajánlások elapadnak, a pipeline egyik hónapról a másikra kiürül.
+
+A baj ritkán az ajánlat. Inkább az, hogy maga az aktív ügyfélszerzés — listázás, megkeresés, utánkövetés — vagy rád vár, akinek erre nincs ideje, vagy senkire se vár.
+
+Érdekel egy 20 perces hívás, hogy megnézzük, nálad hogy áll a kép?
+
+Jó munkát,
+Ákos</div>
+        <div class="delta-note delta-note-proposed"><strong>What's different:</strong> Fused <em>Megkérdezhetem:</em> one-breath open (GOLD-07). <em>Ami jó. Amíg be nem lassul.</em> — two-beat fragment chain (native pulse). <em>Jó munkát</em> sign-off vs <em>Üdvözlettel</em> (peer, not formal). Verb-complete <em>vagy…vagy</em> binary (GOLD-08). Source: <code>gen-round-3.md</code> CE-01·n1 — UNVERIFIED DRAFT.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-1">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-1" placeholder="e.g. 'Megkérdezhetem still feels hesitant here — maybe try a direct open?' or 'Jó munkát is fine'"></textarea>
+    </div>
+  </div>
+
+  <!-- PAIR 2 — Breakup email -->
+  <div class="pair-card" id="pair-2">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 2 — Cold email breakup (CE-02)</div>
+        <div class="pair-brief">3rd-touch breakup after no reply · no blame + consequence-of-inaction hook + "Nem írok többet" + peer sign-off · ≤90 words</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(2,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(2,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-2">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">Tárgy: Egy utolsó gondolat
+
+Szia {{first_name}},
+
+Két emailt küldtem, nem érkezett válasz. Megértem, ha most nem aktuális — nem írok többet.
+
+Egy gondolatot hagyok itt: ha a {{company_name}} új ügyfelei jelenleg főleg ajánlásokból érkeznek, ez hat hónap múlva is valószínűleg ugyanígy fog kinézni, hacsak addig valami meg nem változik.
+
+Ha bármikor aktuálissá válik, tudod, hol keress.
+
+Üdvözlettel,
+Palkovics Ákos</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> Structure is there but the tone is uniformly correct. <em>valószínűleg ugyanígy fog kinézni, hacsak addig valami meg nem változik</em> — over-hedged, long clause where the gold uses a tighter punch. <em>Üdvözlettel</em> again.</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · R3 · n1</span></div>
+        <div class="copy-block">Tárgy: Lezárom a témát
+
+Három levél ment, válasz nem jött — gondolom, most nem ez van a fókuszban. Semmi baj, megértem.
+
+Nem írok többet. Egy gondolatot hagyok itt: ha a {{company_name}} új ügyfelei most az ajánlásokon múlnak, ez fél év múlva is pont így fog kinézni — hacsak közben nem változtatsz a rendszeren.
+
+Ha egyszer aktuálissá válik, tudod, hol keress.
+
+Jó munkát,
+Ákos</div>
+        <div class="delta-note delta-note-proposed"><strong>What's different:</strong> <em>Nem írok többet.</em> as a standalone line (native punch placement). <em>fél év múlva is pont így fog kinézni</em> — tighter consequence hook. <em>Jó munkát</em> sign-off. Source: <code>gen-round-3.md</code> CE-02·n1 — UNVERIFIED DRAFT.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-2">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-2" placeholder="e.g. 'The consequence hook feels too soft — needs more edge'"></textarea>
+    </div>
+  </div>
+
+  <!-- PAIR 3 — Landing H1 + subhead -->
+  <div class="pair-card" id="pair-3">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 3 — Landing hero H1 + subhead (HERO-01)</div>
+        <div class="pair-brief">Targetive homepage · verb-imperative H1, outcome-first, no period/Title-Case, north-star word landing · R3 best variant (n2)</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(3,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(3,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-3">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">H1: Töltsd fel a naptárad minősített tárgyalásokkal, kézi ügyfélszerzés nélkül
+
+Subhead: AI-alapú megkeresési rendszert építünk és futtatunk a nevedben, hogy te csak a beérkező, döntésre kész tárgyalásokra készülj.</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> Grammatically correct. <em>kézi ügyfélszerzés nélkül</em> is a negative frame (what you avoid) rather than the positive outcome. Subhead is one long even clause — safe, well-formed, reads like a translated agency line. No fragments, no texture. <em>te</em> is an explicit pronoun (pro-drop violation, mild).</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · R3 · n2 ⭐ best variant</span></div>
+        <div class="copy-block">H1: Hozz be döntéshozói tárgyalásokat hónapról hónapra, kiszámíthatóan
+
+Subhead: A Targetive AI ügynök összerakja helyetted a céglistát. A döntéshozókat névre szólóan keresi meg — nem tömeglevélből. És nem hagyja, hogy kihűljenek az érdeklődők. A hideg kontaktból így lesz foglalt tárgyalás és tervezhető bevétel.</div>
+        <div class="delta-note delta-note-proposed"><strong>What's different:</strong> H1 lands on <em>kiszámíthatóan</em> (north-star word, SKILL §1.3). Subhead uses the irregular cadence — one clause leads, second takes the qualifying aside (<em>— nem tömeglevélből</em>), third trails as punch, then <em>így</em> pivots to outcome. Source: <code>gen-round-3.md</code> HERO-01·n2 — UNVERIFIED DRAFT.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-3">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-3" placeholder="e.g. 'kiszámíthatóan feels too abstract as the last word — try a more concrete beat?'"></textarea>
+    </div>
+  </div>
+
+  <!-- PAIR 4 — Pain bullets -->
+  <div class="pair-card" id="pair-4">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 4 — Pain section headline + bullets (HERO-02)</div>
+        <div class="pair-brief">Diagnose-before-prescribe question headline + 3 pain bullets · present tense E/2 · ≤10 words each · ≥1 visceral idiom</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(4,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(4,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-4">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">Miért nem alakul ki a kiszámítható ügyfélszerzés?
+
+• Az aktív ügyfélszerzés a cégvezető idejét veszi igénybe — vagy egyszerűen elmarad.
+• Az utánkövetés nem következetes, és az érdeklődők elvesznek.
+• Egyik hónapban sok tárgyalás, a másikban üres a pipeline.</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> The question is correct but cold/abstract. Bullets are clause-complete, evenly weighted, no visceral idiom. <em>elvesznek</em> where the gold says <em>kihűlnek</em> — the gold's physical sensation (leads go cold) lost. No attitude, no irregular rhythm.</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · R3 · n2</span></div>
+        <div class="copy-block">Miért nem áll be soha az ügyfélszerzés egy kiszámítható ritmusba?
+
+• Órák égnek el cégadatok keresgélésén és levélíráson.
+• Az utánkövetés elcsúszik, az érdeklődők lassan kihűlnek.
+• Egyik hónapban tele a naptár, a másikban néma csend.</div>
+        <div class="delta-note delta-note-proposed"><strong>What's different:</strong> <em>égnek el</em> — the gold burn-time idiom (GOLD-04/05). <em>kihűlnek</em> — leads go cold, physical sensation (GOLD-03). <em>néma csend</em> as the closing fragment-punch. <em>kiszámítható ritmusba</em> in the question lands on the north-star register. Source: <code>gen-round-3.md</code> HERO-02·n2 — UNVERIFIED DRAFT.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-4">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-4" placeholder="e.g. 'keresgélésén reads slightly slangy — try kereséssel?'"></textarea>
+    </div>
+  </div>
+
+  <!-- PAIR 5 — CTA -->
+  <div class="pair-card" id="pair-5">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 5 — CTA block (CTA-01)</div>
+        <div class="pair-brief">Primary én-CTA button + secondary self-aware CTA + one-line friction-reducer · 15-min call format · R3 n1</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(5,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(5,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-5">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">Gomb: Kérek egy 20 perces hívást
+
+Microcopy: Nincs kötelezettség, és ha nem látunk valós lehetőséget nálad, ezt az első hívás végén őszintén megmondjuk.</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> One CTA only — no self-aware secondary. Microcopy is correct but reads like a legal disclaimer rather than an attitude-spike. No dry irony, no "Kösz nem, én stresszelni szeretek" register (which the live HU brand corpus shows is peak native).</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · R3 · n1</span></div>
+        <div class="copy-block">Elsődleges én-CTA (gomb):
+Lefoglalom a 15 percet
+
+Másodlagos, önironikus CTA:
+Kösz, nekem jó az üres naptár is
+
+Súrlódáscsökkentő egysoros (a gomb alá):
+15 perc, semmi pitch: átnézzük a listád és a számaid, és megmondom, reális-e nálad 90 nap alatt a 10 tárgyalás. Ha nem, azt is megmondom.</div>
+        <div class="delta-note delta-note-proposed"><strong>What's different:</strong> Self-aware secondary CTA with attitude spike — exactly the <em>Kösz nem, én stresszelni szeretek</em> register from live HU brands. Friction-reducer names what the 15 min covers AND self-qualifies (<em>Ha nem, azt is megmondom</em> — GOLD-11 honesty move). Source: <code>gen-round-3.md</code> CTA-01·n1 — UNVERIFIED DRAFT.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-5">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-5" placeholder="e.g. 'Lefoglalom a 15 percet is fine but Foglalok egy 15 perces hívást might feel more natural'"></textarea>
+    </div>
+  </div>
+
+  <!-- PAIR 6 — Social post -->
+  <div class="pair-card" id="pair-6">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 6 — Social / LinkedIn post (POST-01)</div>
+        <div class="pair-brief">HU LinkedIn post, founder voice · start mid-story · generic anonymised client result + timeframe (NOT Sió/CARRIES) · opinion spike · story-closing CTA · 120–180 words · R3 n1</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(6,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(6,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-6">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">A legtöbb cégvezető, akivel beszélek, ugyanazt mondja: „Van termékem, van csapatom, de az ügyfélszerzés kiszámíthatatlan."
+
+Nem az ajánlattal van a baj. Hanem azzal, hogy az aktív ügyfélszerzés — a listázás, a megkeresés, az utánkövetés — vagy a tulajdonosra vár, akinek erre nincs ideje, vagy senkire se vár.
+
+Mi azt csináljuk, hogy ezt a részt átvesszük. Te a beérkező tárgyalásokra készülsz, mi futtatjuk a rendszert, ami minden nap dolgozik helyetted.
+
+Ha érdekel, hogyan néz ki ez a gyakorlatban, írj egy üzenetet.</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> Opens with other people's quote instead of the founder's own observation. No specific result or timeframe (no number). No opinion spike. CTA is a standard "írj egy üzenetet" without a mid-story-conversational frame. Grammatically clean, no attitude.</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · R3 · n1</span></div>
+        <div class="copy-block">Hadd meséljek egy ügyfelemről. B2B szolgáltató, évek óta szinte kizárólag ajánlásokból élt. Jó cég, jó szolgáltatás — de minden hónap elején ott volt ugyanaz a kérdés: most honnan jön a következő ügyfél?
+
+Nem új ajánlatra volt szüksége. Hanem arra, hogy ne ő maga égesse el a délutánjait cégadatok keresgélésével és levélírással.
+
+Beállítottuk a rendszert, és hagytuk dolgozni. Hat hét alatt 9 előminősített döntéshozói tárgyalás jött be, kizárólag hideg megkeresésből — olyan cégekkel, amelyeket korábban a véletlenre bízott.
+
+És őszintén? A legtöbb cég nem azért nem növekszik, mert rossz a szolgáltatása. Hanem mert az aktív ügyfélszerzést arra hagyja, akinek soha nincs rá ideje — vagyis saját magára.
+
+Ettől lesz az egyik hónap tele beszélgetéssel, a másik meg néma csend. És ezt hívjuk „üzleti tervezésnek".
+
+Ha ismerős a séma, írj egy üzenetet, és megnézem, nálad reális-e ugyanez.</div>
+        <div class="delta-note delta-note-proposed"><strong>What's different:</strong> Specific result + timeframe (<em>Hat hét alatt 9 tárgyalás</em>). Burn-time idiom (<em>égesse el a délutánjait</em>). Opinion spike (<em>És ezt hívjuk „üzleti tervezésnek"</em> — dry irony). Companies use <em>amelyeket</em> (not <em>akiket</em> — no floor error). CTA reads as the next spoken line of the story. Source: <code>gen-round-3.md</code> POST-01·n1 — UNVERIFIED DRAFT.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-6">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-6" placeholder="e.g. 'keresgélésével reads slightly slangy — prefer kereséssel?'  or  'opinion spike lands well'"></textarea>
+    </div>
+  </div>
+
+  <!-- PAIR 7 — Value prop / responsibility split -->
+  <div class="pair-card" id="pair-7">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 7 — Value prop / responsibility split (VP-01)</div>
+        <div class="pair-brief">Mi/Te split — what the system does vs what the client does · flowing prose, not a slide · R3 n1 (cleanest variant)</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(7,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(7,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-7">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">Az aktív ügyfélszerzés a legtöbb szolgáltató cégnél a tulajdonos idejét emészti fel, vagy egyszerűen kimarad. Mi ezt a terhet levesszük a válladról. Felépítjük és működtetjük a teljes kimenő megkeresési rendszert: döntéshozói lista, személyre szabott emailek, automatizált utánkövetés. Te a minősített tárgyalásokra koncentrálsz, mi mindenre másra. Az eredmény egy kiszámítható pipeline, ami nem a véletlen ajánlásokon múlik.</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> The noun pile (<em>döntéshozói lista, személyre szabott emailek, automatizált utánkövetés</em>) reads like a feature list. <em>mindenre másra</em> is a vague handwave. Correct and well-formed, but mechanically assembled from KB §F levers — no voice texture.</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · R3 · n1</span></div>
+        <div class="copy-block">A Targetive AI nem egy újabb eszköz, amit neked kell életben tartanod és etetned. A célunk az, hogy ne egy új feladatod legyen, hanem levegyünk terhet a válladról.
+
+Mi rakjuk össze az ellenőrzött céglistát. Mi írjuk meg a megkereséseket — sablon helyett személyre szabva. Mi visszük az utánkövetést, hogy egyetlen érdeklődő se hűljön ki.
+
+Neked annyi dolgod marad: beülsz a kész tárgyalásokra és megkötöd az üzletet.
+
+A háttérmunka a miénk, a kézfogás a tiéd.</div>
+        <div class="delta-note delta-note-proposed"><strong>What's different:</strong> <em>A háttérmunka a miénk, a kézfogás a tiéd.</em> — one-line contrast close (GOLD-06 style). Mi anaphora runs inline, no <em>Mi:</em>/<em>Te:</em> labels. Verb-pile capped at two (<em>életben tartanod és etetned</em>). <em>megkötöd az üzletet</em> → <em>zárja az üzletet</em> anti-echo rule honoured. Source: <code>gen-round-3.md</code> VP-01·n1 — UNVERIFIED DRAFT.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-7">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-7" placeholder="e.g. 'etetned feels a bit forced with the tool metaphor — maybe just életben tartanod?'"></textarea>
+    </div>
+  </div>
+
+  <!-- PAIR 8 — FAQ objection -->
+  <div class="pair-card" id="pair-8">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 8 — FAQ objection rebuttal</div>
+        <div class="pair-brief">"Ez nem csak tömeges spam?" objection · direct rebuttal first, then Mi/Te split, then positioning close · ~80 words</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(8,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(8,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-8">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">Egyáltalán nem. A Targetive AI rendszer nem tömeges levélküldésre van optimalizálva, hanem arra, hogy releváns, személyre szabott megkereséseket küldjön az előre szűrt döntéshozóknak.
+
+Mi rakjuk össze a listát, mi írjuk a szövegeket, mi visszük az utánkövetést. Te csak az érdeklődőkkel foglalkozol.
+
+Az értékesítőt nem váltjuk le — előkészítjük a terepet számára.</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> Direct rebuttal is there, but <em>nincs optimalizálva…hanem arra, hogy</em> is a nominalization chain. Ending is passive-feeling (<em>előkészítjük a terepet számára</em> is correct but lifeless vs the gold's punchier close).</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · drawn from GOLD-06 verbatim</span></div>
+        <div class="copy-block">Egyáltalán nem. A Targetive AI célja nem a tömeges spam, hanem a kulturált, releváns és emberi megkeresés.
+
+Mi rakjuk össze a listát. Mi írjuk a megkereséseket. Mi kezeljük az utánkövetést. Neked elsősorban a beérkező érdeklődőkkel, megbeszélésekkel kell foglalkoznod.
+
+Nem lecseréljük az értékesítőt, hanem előkészítjük neki a terepet. Az AI a háttérben dolgozik, az ember zárja az üzletet.</div>
+        <div class="delta-note delta-note-proposed"><strong>Provenance note:</strong> This output is drawn near-verbatim from <strong>GOLD-06</strong> (Ákos's own copy, <code>corpus-our-gold.md:191</code>, live at targetivai.framer.website FAQ). It is the gold anchor for the FAQ format. The proposed skill produces this because it imitates the gold, not because it generates from rules. Source: GOLD-06 — Ákos's own copy, NOT a generated draft.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-8">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-8" placeholder="e.g. 'kulturált feels slightly stiff — maybe just: nem spam, hanem emberi megkeresés'"></textarea>
+    </div>
+  </div>
+
+  <!-- PAIR 9 — Offer one-pager promise -->
+  <div class="pair-card" id="pair-9">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 9 — Offer one-pager promise block</div>
+        <div class="pair-brief">Dream-state first · mechanism second · native metaphor · reader's reward · self-qualifying CTA · drawn from GOLD-11 + R3 output</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(9,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(9,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-9">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">Amit kínálunk:
+
+Egy működő hideg megkeresési rendszer, amely a nevedben elér céges döntéshozókat, előminősíti az érdeklődőket és a foglalt időpontokat egyenesen a naptáradba juttatja.
+
+Nincs szükség értékesítési csapatra. 90 nap alatt minimum 10 tárgyalás, garantáltan, vagy a pénzed visszaadjuk.
+
+Foglalj egy 15 perces hívást, hogy felmérjük, reális-e nálad ugyanez.</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> Feature-mechanism leads instead of dream-state. <em>Amit kínálunk:</em> header is company-first (the exact BAD-7 pattern). The guarantee exists but the mechanism is described as a function, not a native metaphor. No two-leg metaphor, no reader-reward sentence, no attitude spike.</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · drawn from GOLD-11 (corpus-our-gold.md:279)</span></div>
+        <div class="copy-block">Tele naptár döntéshozói tárgyalásokkal, anélkül, hogy neked vagy a csapatodnak a hideg megkereséssel kellene foglalkoznotok. 90 nap alatt 10+ döntéshozói tárgyalás, garantáltan.
+
+Ez a gyors láb: az első tárgyalások jellemzően 14 napon belül megvannak. Ez a skálázó láb: amint a rendszer beáll, folyamatosan tölti a naptárat.
+
+Te csak a kész, bekészített tárgyalásokra ülsz be.
+
+Megnézzük a számaidat, az ügyfélértékedet és a mostani pipeline-odat — és megmondom, reális-e nálad a 10 tárgyalás. Foglalj időpontot: [Calendly-link]</div>
+        <div class="delta-note delta-note-proposed"><strong>Provenance note:</strong> This output is drawn near-verbatim from <strong>GOLD-11</strong> (Ákos's own offer one-pager, <code>corpus-our-gold.md:279</code>). Dream-state leads. Two-leg metaphor (<em>gyors láb / skálázó láb</em>) — native, not "phase 1/2". Reader-reward: <em>Te csak a kész tárgyalásokra ülsz be</em>. CTA self-qualifies. Source: GOLD-11 — Ákos's own copy.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-9">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-9" placeholder="e.g. 'gyors láb / skálázó láb metaphor is great — keep it'"></textarea>
+    </div>
+  </div>
+
+  <!-- PAIR 10 — Warm reactivation DM -->
+  <div class="pair-card" id="pair-10">
+    <div class="pair-header">
+      <div>
+        <div class="pair-title">Pair 10 — Warm reactivation DM</div>
+        <div class="pair-brief">Re-engage a lead who went cold 3 months ago · take fault on your side · two-word apology · ground the context · short · drawn from GOLD-10</div>
+      </div>
+      <div class="pair-verdict-row">
+        <button class="verdict-btn verdict-btn-approve" onclick="setVerdict(10,'approve')">✓ Approve</button>
+        <button class="verdict-btn verdict-btn-flag" onclick="setVerdict(10,'flag')">⚑ Flag</button>
+        <span class="verdict-status" id="status-10">—</span>
+      </div>
+    </div>
+    <div class="pair-columns">
+      <div class="col-live">
+        <div class="col-label col-label-live"><span>Live skill output</span> <span class="col-tag tag-live">v2 KB-ANCHORED</span></div>
+        <div class="copy-block">Szia {{first_name}},
+
+Korábban egyeztettünk a {{company_name}} ügyfélszerzési rendszeréről, de aztán nem folytattuk a megbeszélést. Időközben sok mindent fejlesztettünk a rendszeren, és úgy gondoltam, érdemes lenne ismét felvennünk a kapcsolatot.
+
+Szívesen megmutatom, hogy mi változott. Van esetleg 20 perced egy rövid hívásra?
+
+Üdvözlettel,
+Palkovics Ákos</div>
+        <div class="delta-note delta-note-live"><strong>What the audit found:</strong> No fault-taking — <em>nem folytattuk</em> is passive and puts no responsibility anywhere. No two-word apology. <em>Időközben sok mindent fejlesztettünk</em> sounds like a product update blast. <em>Üdvözlettel</em> again — wrong register for a warm contact.</div>
+      </div>
+      <div class="col-proposed">
+        <div class="col-label col-label-proposed"><span>Proposed skill output</span> <span class="col-tag tag-proposed">v3 FEW-SHOT-FIRST · drawn from GOLD-10 (corpus-our-gold.md:269)</span></div>
+        <div class="copy-block">Decemberben beszéltünk a {{company_name}} ügyfélszerzéséről, aztán az én oldalamon elcsúszott a folytatás. Bocsánat érte.
+
+Azóta elindult pár dolog — ha egy 20 perces hívásban szívesen végignéznéd, szólj.
+
+Jó munkát,
+Ákos</div>
+        <div class="delta-note delta-note-proposed"><strong>Provenance note:</strong> Drawn near-verbatim from <strong>GOLD-10</strong> (Ákos's own warm DM, <code>corpus-our-gold.md:269</code>). Fault on <em>my side</em> explicitly. Two-word apology with no elaboration (<em>Bocsánat érte</em>). Grounds the context with a date. No product-blast phrasing. Peer sign-off. Source: GOLD-10 — Ákos's own copy.</div>
+      </div>
+    </div>
+    <div class="flag-row" id="flag-row-10">
+      <label>Flag note (what's wrong / what it should do instead):</label>
+      <textarea id="flag-note-10" placeholder="e.g. 'Decemberben is a placeholder — fine for the template, just needs the real month'"></textarea>
+    </div>
+  </div>
+
+</div><!-- /pairs-container -->
+
+<!-- ─── GATE SECTION ─── -->
+<div class="gate-section">
+  <div class="gate-title">Two open gates before promoting the skill</div>
+  <div class="gate-desc">
+    Both gates must be crossed before the live <code>SKILL.md</code> is replaced. Gate 1 is a 5-minute file edit.
+    Gate 2 is what you just did above — ≥ 9 / 10 Approve in this playground = §3.3 crossed.
+    If both pass, click the export button above and paste the result back into chat — Ákos confirms, Jarvis promotes.
+  </div>
+  <div class="gate-grid">
+    <div class="gate-row-item gate-open" id="gate-1-row">
+      <div class="gate-check" id="gate-1-check" onclick="toggleGate(1)">○</div>
+      <div class="gate-text">
+        <strong>Gate 1 — R4 floor regression patch</strong>
+        <br><span>Add one contrast few-shot to <code>SKILL-PROPOSED.md</code>: ❌ <em>Egy marketinges cég, akinek a bevétele…</em> vs ✅ <em>Egy marketingcég — a bevételük 80%-ban ajánlásból jött.</em> (recast, drop relative pronoun). 5 min. Cite R4 POST-01 n1 as the ❌ and GOLD-08 recast pattern as the ✅. Detail: <code>EVAL-REPORT.md §R4 fix #1</code>.</span>
+      </div>
+      <div class="gate-status" id="gate-1-status">OPEN</div>
+    </div>
+    <div class="gate-row-item gate-open" id="gate-2-row">
+      <div class="gate-check" id="gate-2-check" onclick="toggleGate(2)">○</div>
+      <div class="gate-text">
+        <strong>Gate 2 — §3.3 calibration spot-check (this playground)</strong>
+        <br><span>≥ 9 / 10 pairs above = Approve. Ákos's blind gut-check: "would I send the proposed version as my own voice?" Once both gates are checked, export the verdict and paste into chat.</span>
+      </div>
+      <div class="gate-status" id="gate-2-status">OPEN</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<div class="footer">
+  <strong>Provenance.</strong> Every "good copy" example in the proposed skill cites its real source (workspace file or live URL fetched 2026-06-18). No Hungarian brand was fabricated.
+  Client results (Sió 47x, CARRIES 197x) do NOT appear in any generated copy — they are for SELLING only (CLAUDE.md Provenance Gate + eval-harness.md §6).
+  All generated copy is UNVERIFIED DRAFT until Ákos approves. The judge that graded each round was a DIFFERENT <code>claude -p</code> invocation than the writer — decorrelation enforced in all 4 rounds.
+  <br><br>
+  <strong>Live skill unchanged.</strong> <code>.claude/skills/mkt-hu-copy/SKILL.md</code> (last-modified 2026-06-15) was NOT touched by this run.
+  Prior archived version: <code>.claude/skills/mkt-hu-copy/SKILL-v1-archived-2026-06-15.md</code>.
+  Proposed upgrade: <code>_upgrade-2026-06-18/SKILL-PROPOSED.md</code>.
+</div>
+
+<!-- ─── EXPORT MODAL ─── -->
+<div id="export-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Export — paste this back into chat</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">Copy the block below and paste it into the chat. Jarvis will map each verdict to the next action.</div>
+    <textarea class="modal-textarea" id="export-text" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-copy" onclick="copyExport()">Copy to clipboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TOTAL = 10;
+  const verdicts = {};   // { 1: 'approve'|'flag' }
+  const flagNotes = {};  // { 1: 'note text' }
+  const gateStates = {}; // { 1: bool, 2: bool }
+
+  function setVerdict(id, v) {
+    verdicts[id] = v;
+    // button states
+    const card = document.getElementById('pair-' + id);
+    const appBtn = card.querySelector('.verdict-btn-approve');
+    const flagBtn = card.querySelector('.verdict-btn-flag');
+    appBtn.classList.toggle('active', v === 'approve');
+    flagBtn.classList.toggle('active', v === 'flag');
+    card.classList.toggle('approved', v === 'approve');
+    card.classList.toggle('flagged', v === 'flag');
+    // flag row
+    const flagRow = document.getElementById('flag-row-' + id);
+    flagRow.classList.toggle('visible', v === 'flag');
+    // status label
+    const status = document.getElementById('status-' + id);
+    if (v === 'approve') { status.textContent = '✓ Approved'; status.style.color = 'var(--approve)'; }
+    else { status.textContent = '⚑ Flagged'; status.style.color = 'var(--flag)'; }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const judged = Object.keys(verdicts).length;
+    const approved = Object.values(verdicts).filter(v => v === 'approve').length;
+    document.getElementById('progress-label').textContent = judged + ' / ' + TOTAL + ' judged · ' + approved + ' approve';
+    const exportBtn = document.getElementById('export-btn');
+    exportBtn.disabled = judged < TOTAL;
+    // gate 2 auto-update
+    if (judged === TOTAL) {
+      const approveCount = Object.values(verdicts).filter(v => v === 'approve').length;
+      if (approveCount >= 9) {
+        if (!gateStates[2]) toggleGate(2, true);
+      }
+    }
+  }
+
+  function toggleGate(id, forceOn) {
+    const isOn = forceOn !== undefined ? forceOn : !gateStates[id];
+    gateStates[id] = isOn;
+    const check = document.getElementById('gate-' + id + '-check');
+    const row = document.getElementById('gate-' + id + '-row');
+    const status = document.getElementById('gate-' + id + '-status');
+    check.classList.toggle('checked', isOn);
+    check.textContent = isOn ? '✓' : '○';
+    row.classList.toggle('gate-closed', isOn);
+    row.classList.toggle('gate-open', !isOn);
+    status.textContent = isOn ? 'CLOSED ✓' : 'OPEN';
+    status.style.color = isOn ? 'var(--approve)' : 'var(--muted)';
+  }
+
+  function buildExport() {
+    const approved = [];
+    const flagged = [];
+    for (let i = 1; i <= TOTAL; i++) {
+      if (verdicts[i] === 'approve') approved.push(i);
+      else if (verdicts[i] === 'flag') flagged.push(i);
+    }
+    const approveCount = approved.length;
+    const calibrationPassed = approveCount >= 9;
+    const gate1 = !!gateStates[1];
+    const gate2 = !!gateStates[2];
+    const canPromote = gate1 && gate2;
+
+    let lines = [];
+    lines.push('=== mkt-hu-copy upgrade — review-gate export (2026-06-18) ===');
+    lines.push('');
+    lines.push('CALIBRATION RESULT: ' + approveCount + ' / ' + TOTAL + ' Approve (' + (calibrationPassed ? '≥9 — §3.3 PASSED ✓' : '<9 — §3.3 NOT YET PASSED') + ')');
+    lines.push('');
+    lines.push('VERDICTS:');
+    for (let i = 1; i <= TOTAL; i++) {
+      const v = verdicts[i] || 'not-judged';
+      const note = (document.getElementById('flag-note-' + i) || {}).value || '';
+      const noteTxt = (v === 'flag' && note.trim()) ? ' — NOTE: ' + note.trim() : '';
+      lines.push('  Pair ' + i + ': ' + v.toUpperCase() + noteTxt);
+    }
+    lines.push('');
+    lines.push('GATE STATUS:');
+    lines.push('  Gate 1 (R4 aki-for-company patch): ' + (gate1 ? 'CLOSED ✓' : 'OPEN — patch pending'));
+    lines.push('  Gate 2 (§3.3 calibration): ' + (gate2 ? 'CLOSED ✓' : 'OPEN — ' + approveCount + '/10 approve'));
+    lines.push('');
+    lines.push('DECISION:');
+    if (canPromote) {
+      lines.push('  ✓ BOTH GATES CLOSED — Approve to replace live SKILL.md with SKILL-PROPOSED.md');
+      lines.push('  Action: copy _upgrade-2026-06-18/SKILL-PROPOSED.md → SKILL.md (archive old as SKILL-v2-before-upgrade.md)');
+    } else {
+      lines.push('  HOLD — live SKILL.md stays untouched. Open gates:');
+      if (!gate1) lines.push('    - Apply R4 floor patch to SKILL-PROPOSED.md (see EVAL-REPORT.md §R4 fix #1)');
+      if (!gate2) lines.push('    - §3.3 calibration: ' + approveCount + '/10 approve — need ≥9');
+    }
+    if (flagged.length > 0) {
+      lines.push('');
+      lines.push('FLAGS (apply as few-shot patches before promoting):');
+      flagged.forEach(i => {
+        const note = (document.getElementById('flag-note-' + i) || {}).value || '';
+        lines.push('  Pair ' + i + ': ' + (note.trim() || '(no note)'));
+      });
+    }
+    lines.push('');
+    lines.push('All generated copy = UNVERIFIED DRAFT until Ákos approves.');
+    lines.push('Live SKILL.md NOT touched. Proposed upgrade: _upgrade-2026-06-18/SKILL-PROPOSED.md');
+    return lines.join('\n');
+  }
+
+  document.getElementById('export-btn').addEventListener('click', () => {
+    document.getElementById('export-text').value = buildExport();
+    document.getElementById('export-modal').classList.add('visible');
+  });
+
+  function closeModal() {
+    document.getElementById('export-modal').classList.remove('visible');
+  }
+
+  function copyExport() {
+    const ta = document.getElementById('export-text');
+    ta.select();
+    try {
+      document.execCommand('copy');
+      const btn = document.querySelector('.btn-copy');
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => { btn.textContent = 'Copy to clipboard'; }, 1800);
+    } catch(e) {
+      alert('Select all and copy manually (Cmd+A, Cmd+C)');
+    }
+  }
+
+  document.getElementById('export-modal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('export-modal')) closeModal();
+  });
+</script>
+</body>
+</html>
