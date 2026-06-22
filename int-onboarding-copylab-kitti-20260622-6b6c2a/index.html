@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copy Lab — Onboarding Kittinek · targetive.ai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ti-ink:#0F172A; --ti-deep:#14532D; --ti-signal:#84CC16; --ti-air:#A3E635;
+  --ti-paper:#F5F7F0; --ti-bone:#FAFCF6; --ti-paper-2:#E8EEDF; --ti-line:#DDE1D0;
+  --ti-line-2:#1F2E2C; --ti-mute:#6B7280;
+  --r-sm:8px; --r-md:14px; --r-lg:18px;
+  --shadow-card:0 30px 60px -40px rgba(15,23,42,.25), 0 8px 20px -12px rgba(15,23,42,.18);
+  --font:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--ti-ink);background:var(--ti-bone);-webkit-font-smoothing:antialiased}
+.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:64px 88px;position:relative;border-bottom:1px solid var(--ti-line)}
+.slide.dark{background:var(--ti-ink);color:var(--ti-paper);border-bottom:1px solid var(--ti-line-2)}
+.slide.signal{background:var(--ti-signal);color:var(--ti-ink);border-bottom:none}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ti-deep);margin-bottom:16px}
+.slide.dark .kicker{color:var(--ti-air)}
+.slide.signal .kicker{color:var(--ti-ink)}
+.display{font-size:72px;font-weight:800;line-height:.98;letter-spacing:-.035em}
+.h1{font-size:44px;font-weight:700;line-height:1.05;letter-spacing:-.03em}
+.h2{font-size:28px;font-weight:700;line-height:1.12;letter-spacing:-.02em;margin-bottom:8px}
+.lead{font-size:18px;font-weight:400;line-height:1.6;color:var(--ti-mute);max-width:780px}
+.slide.dark .lead{color:#C7CDBF}
+.slide.signal .lead{color:rgba(15,23,42,.72)}
+.mark{width:44px;height:auto;color:var(--ti-signal)}
+.topbar{position:absolute;top:30px;left:88px;right:88px;display:flex;align-items:center;justify-content:space-between}
+.brandname{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.brandname span{color:var(--ti-signal)}
+.slide.dark .brandname span{color:var(--ti-air)}
+.pageno{font-size:12px;font-weight:600;color:var(--ti-mute);font-variant-numeric:tabular-nums}
+.slide.dark .pageno{color:#8C9382}
+.slide.signal .pageno,.slide.signal .brandname,.slide.signal .brandname span{color:var(--ti-ink)}
+.steplabel{display:inline-flex;align-items:center;gap:12px;margin-bottom:14px}
+.stepbig{width:52px;height:52px;border-radius:var(--r-md);background:var(--ti-signal);color:var(--ti-ink);font-weight:800;font-size:24px;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.slide.dark .stepbig{background:var(--ti-air)}
+.grid{display:grid;gap:16px;margin-top:28px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--ti-paper);border:1px solid var(--ti-line);border-radius:var(--r-md);padding:20px 22px;box-shadow:var(--shadow-card)}
+.slide.dark .card{background:#16213A;border-color:var(--ti-line-2);box-shadow:none}
+.card h3{font-size:17px;font-weight:700;margin-bottom:6px}
+.card p{font-size:14.5px;color:var(--ti-mute);line-height:1.5}
+.slide.dark .card p{color:#A9B0A0}
+.ul{margin-top:22px;max-width:820px}
+.ul li{list-style:none;font-size:17px;line-height:1.5;padding:11px 0 11px 30px;border-bottom:1px solid var(--ti-line);position:relative}
+.ul li:last-child{border-bottom:none}
+.ul li::before{content:"";position:absolute;left:4px;top:19px;width:9px;height:9px;border-radius:2px;background:var(--ti-signal)}
+.ul li b{font-weight:700}
+.todo{margin-top:24px;max-width:840px}
+.todo .t{display:flex;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--ti-line)}
+.todo .t:last-child{border-bottom:none}
+.todo .n{flex-shrink:0;width:30px;height:30px;border-radius:var(--r-sm);background:var(--ti-paper-2);color:var(--ti-deep);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
+.todo .tx{font-size:16px}
+.tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:var(--r-sm);margin-left:10px;vertical-align:middle;background:var(--ti-signal);color:var(--ti-ink)}
+.bandrow{display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--ti-line)}
+.bandrow:last-child{border-bottom:none}
+.badge{flex-shrink:0;width:118px;text-align:center;font-size:13px;font-weight:800;letter-spacing:.02em;padding:7px 0;border-radius:var(--r-sm)}
+.b-ship{background:#dcfce7;color:#15803d}.b-nearly{background:#fef9c3;color:#a16207}
+.b-rework{background:#ffedd5;color:#c2410c}.b-fail{background:#fee2e2;color:#dc2626;text-decoration:line-through}
+.b-lint{background:var(--ti-paper-2);color:var(--ti-mute)}
+.banddesc{font-size:15px;line-height:1.45}
+.linkbox{margin-top:26px;display:inline-flex;flex-direction:column;gap:6px}
+.linkurl{font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--ti-air)}
+.slide:not(.dark) .linkurl{color:var(--ti-deep)}
+.linkbtn{display:inline-block;margin-top:24px;background:var(--ti-signal);color:var(--ti-ink);text-decoration:none;font-weight:700;font-size:15px;padding:14px 26px;border-radius:var(--r-sm);width:fit-content}
+.nav{position:fixed;bottom:22px;right:26px;display:flex;gap:8px;z-index:20}
+.nav a{width:34px;height:34px;border-radius:var(--r-sm);background:var(--ti-ink);color:var(--ti-paper);display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;font-size:15px;opacity:.82}
+.nav a:hover{opacity:1}
+.watermark{position:absolute;right:56px;bottom:36px;width:190px;color:var(--ti-signal);opacity:.07;pointer-events:none}
+@media print{html{scroll-snap-type:none}.slide{min-height:100vh;page-break-after:always;border-bottom:none}.nav{display:none}}
+@media(max-width:860px){.slide{padding:52px 26px}.display{font-size:46px}.h1{font-size:32px}.g2,.g3{grid-template-columns:1fr}.topbar{left:26px;right:26px}}
+</style>
+</head>
+<body>
+<main class="deck">
+
+<!-- 1 · COVER -->
+<section class="slide dark">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">Copy Lab · Onboarding</span></div>
+  <svg class="mark" viewBox="120 93 135 189" style="color:var(--ti-air);margin-bottom:28px"><path fill="currentColor" d="M 265.472656 93.035156 C 266.230469 93.40625 265.875 98.761719 265.871094 100 L 265.910156 109.679688 L 265.847656 139.339844 L 265.855469 231.117188 C 255.441406 231.03125 245.027344 231.03125 234.613281 231.113281 C 228.617188 231.152344 222.746094 231.023438 216.738281 231.167969 L 216.71875 194.632812 C 216.71875 192.652344 217.027344 184.640625 216.726562 183.34375 C 215.417969 183.921875 206.765625 192.984375 205.140625 194.609375 L 174.3125 225.699219 C 173.363281 226.667969 169.554688 230.148438 169.273438 231.085938 L 169.476562 231.378906 C 171.511719 231.699219 178.550781 231.320312 181.226562 231.371094 C 192.949219 231.570312 204.789062 231.265625 216.511719 231.441406 C 216.34375 248.210938 216.636719 265.039062 216.519531 281.796875 L 192.371094 281.800781 C 183.484375 281.894531 174.597656 281.867188 165.714844 281.722656 C 143.0625 280.140625 125.703125 263.816406 121.261719 241.765625 C 118.445312 227.585938 121.941406 212.882812 130.835938 201.488281 C 132.800781 198.984375 135.027344 196.785156 137.234375 194.496094 C 140.621094 190.980469 144.039062 187.488281 147.480469 184.023438 L 173.546875 157.765625 C 176.898438 154.398438 180.246094 151.019531 183.605469 147.65625 C 184.308594 146.953125 186.066406 145.507812 185.851562 144.550781 C 180.941406 144.242188 173.671875 144.558594 168.550781 144.558594 L 134.480469 144.5 C 134.136719 132.773438 134.644531 120.800781 134.441406 109.050781 C 134.351562 103.890625 134.332031 98.261719 134.613281 93.136719 L 224.503906 93.105469 L 250.949219 93.113281 C 255.679688 93.109375 260.761719 93.195312 265.472656 93.035156 Z"></path></svg>
+  <div class="kicker">Onboarding · 2026.06.22</div>
+  <h1 class="display">Copy Lab</h1>
+  <p class="lead" style="margin-top:18px">A szövegíró edződ minden copyhoz, amit írunk. Ez egy lépésről lépésre onboarding, lapozz végig nyugodtan, a végén pontosan tudni fogod, mit csinálj.</p>
+  <p class="linkurl" style="margin-top:24px">copylab.targetive.ai</p>
+</section>
+
+<!-- 2 · MI EZ (all copy) -->
+<section class="slide">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">02 / 13</span></div>
+  <div class="kicker">Mi ez az egész</div>
+  <h2 class="h1">Edző minden copyhoz, amit írunk</h2>
+  <p class="lead" style="margin-top:16px">Nem csak hideg emailekhez. A Copy Lab a teljes szövegírást segíti, és tanul a Te ízlésedből.</p>
+  <div class="grid g3">
+    <div class="card"><h3>Cold email</h3><p>Most ez a legjobban betanított típus.</p></div>
+    <div class="card"><h3>Weboldal</h3><p>Hero, szekciók, oldalszöveg.</p></div>
+    <div class="card"><h3>Közösségi poszt</h3><p>Social copy, rövid formák.</p></div>
+    <div class="card"><h3>Hírlevél</h3><p>Email-kampány szövegek.</p></div>
+    <div class="card"><h3>Hirdetés</h3><p>Ad copy, headline-ök.</p></div>
+    <div class="card"><h3>CTA</h3><p>Gomb- és felhívás-szövegek.</p></div>
+  </div>
+</section>
+
+<!-- 3 · HOGYAN TANUL -->
+<section class="slide">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">03 / 13</span></div>
+  <div class="kicker">Hogyan működik</div>
+  <h2 class="h1">Generál, te értékeled, ő tanul</h2>
+  <div class="grid g3" style="margin-top:30px">
+    <div class="card"><h3>1. Generál</h3><p>Két verziót ír briefenként: egy alap és egy tanított változatot, hogy lásd a különbséget.</p></div>
+    <div class="card"><h3>2. Te értékeled</h3><p>Pont, MEHET / NEM MEHET, és egy rövid indok. Ez a lépés a motor.</p></div>
+    <div class="card"><h3>3. Tanul tőled</h3><p>Ahogy gyűlik a visszajelzésed, a bíró egyre jobban felismeri a jó szöveget, a Te szinteden.</p></div>
+  </div>
+  <p class="lead" style="margin-top:28px"><strong style="color:var(--ti-ink)">A Te őszinte értékelésed teszi okossá a rendszert.</strong> Minél több jelölés indokkal, annál jobb lesz.</p>
+</section>
+
+<!-- 4 · BELÉPÉS (login link) -->
+<section class="slide dark">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">04 / 13</span></div>
+  <div class="kicker">Belépés</div>
+  <h2 class="h1">Itt lépsz be</h2>
+  <div class="linkbox">
+    <span class="linkurl">copylab.targetive.ai</span>
+  </div>
+  <p class="lead" style="margin-top:22px">Nyisd meg a linket, és lépj be a <b style="color:var(--ti-paper)">Google-fiókoddal</b> (a „Bejelentkezés Google-lel" gomb). A rendszer megjegyez, nem kell minden alkalommal belépned.</p>
+  <a class="linkbtn" href="https://copylab.targetive.ai">copylab.targetive.ai megnyitása</a>
+</section>
+
+<!-- 5 · A TO-DO LISTÁD -->
+<section class="slide">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">05 / 13</span></div>
+  <div class="kicker">A feladataid</div>
+  <h2 class="h1">A to-do listád ott van az appban</h2>
+  <p class="lead" style="margin-top:14px">A bal menüben a <b style="color:var(--ti-ink)">Feladatok</b> nézetben megtalálod a 6 lépésed, sorban. Nem kell fejből tudnod, a tábla vezet végig.</p>
+  <div class="todo">
+    <div class="t"><span class="n">1</span><span class="tx">Belépés és körülnézés</span></div>
+    <div class="t"><span class="n">2</span><span class="tx">Generálj egy köteget</span></div>
+    <div class="t"><span class="n">3</span><span class="tx">Értékeld az emaileket</span></div>
+    <div class="t"><span class="n">4</span><span class="tx">Írj 3-5 saját arany példát</span></div>
+    <div class="t"><span class="n">5</span><span class="tx">Gold kuráció</span></div>
+    <div class="t"><span class="n">6</span><span class="tx">Vak kalibráció</span></div>
+  </div>
+  <p class="lead" style="margin-top:20px;font-size:16px">Az <b style="color:var(--ti-ink)">Útmutató</b> nézetben pedig egy bepipálható checklist is van, ami ott folytatja, ahol abbahagytad.</p>
+</section>
+
+<!-- 6 · LÉPÉS 1 -->
+<section class="slide">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">06 / 13</span></div>
+  <div class="steplabel"><span class="stepbig">1</span><span class="kicker" style="margin:0">Lépés · ~5 perc</span></div>
+  <h2 class="h1">Belépés és körülnézés</h2>
+  <ul class="ul">
+    <li>Lépj be a <b>copylab.targetive.ai</b> oldalon a Google-fiókoddal.</li>
+    <li>Nézd meg a bal menüt. A fő nézetek: <b>Generálás</b> (itt gyártasz), <b>Értékelés</b> (itt pontozol), <b>Útmutató</b> (segítség).</li>
+    <li>Jobb alsó sarokban a <b>Kérdezz</b> gomb, bármikor kérdezhetsz tőle magyarul.</li>
+  </ul>
+</section>
+
+<!-- 7 · LÉPÉS 2 -->
+<section class="slide">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">07 / 13</span></div>
+  <div class="steplabel"><span class="stepbig">2</span><span class="kicker" style="margin:0">Lépés · ~3 perc</span></div>
+  <h2 class="h1">Generálj egy köteget</h2>
+  <ul class="ul">
+    <li>Menj a <b>Generálás</b> nézetre, válassz fent egy <b>szövegtípust</b> (pl. cold email).</li>
+    <li>Kattints egy <b>„Gyors brief" sablonra</b>, egy kattintás kitölti a célt, a célközönséget és a hangnemet. Vagy írd be magad.</li>
+    <li>Köteg mérete: <b>5</b>. Nyomd meg a <b>Generálj</b> gombot.</li>
+    <li>Egy 5-ös köteg kb. <b>3 perc</b>. A „generálás X/5" számláló mutatja, hol tart. Nem fagyott le, csak dolgozik.</li>
+  </ul>
+</section>
+
+<!-- 8 · LÉPÉS 3 -->
+<section class="slide signal">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">08 / 13</span></div>
+  <div class="steplabel"><span class="stepbig" style="background:var(--ti-ink);color:var(--ti-signal)">3</span><span class="kicker" style="margin:0">Lépés · a legfontosabb</span></div>
+  <h2 class="h1">Értékeld az emaileket</h2>
+  <ul class="ul" style="border-color:rgba(15,23,42,.15)">
+    <li style="border-color:rgba(15,23,42,.15)">Olvasd el a három oszlopot: <b>Eredeti</b>, <b>Javított</b>, <b>Ahogy te írnád</b>.</li>
+    <li style="border-color:rgba(15,23,42,.15)">Adj <b>pontot 1-10</b>, majd <b>MEHET</b> vagy <b>NEM MEHET</b>.</li>
+    <li style="border-color:rgba(15,23,42,.15)">Írd be röviden, <b>miért</b> (főleg ha nem mehet), majd <b>Beküldés</b>.</li>
+    <li style="border-color:rgba(15,23,42,.15)">Tipp: ha gyenge, írd át a „Hogyan írnád?" mezőbe és nyomd meg az <b>Újragenerálás a visszajelzéssel</b> gombot, a gép a visszajelzésed alapján újraírja a Javított verziót.</li>
+  </ul>
+</section>
+
+<!-- 9 · LÉPÉS 4-5 -->
+<section class="slide">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">09 / 13</span></div>
+  <div class="steplabel"><span class="stepbig">4·5</span><span class="kicker" style="margin:0">Lépés</span></div>
+  <h2 class="h1">Saját arany példák és gold kuráció</h2>
+  <div class="grid g2" style="margin-top:26px">
+    <div class="card"><h3>4. Írj 3-5 saját arany példát</h3><p>A Te jó, kész szöveged a legértékesebb tanítóanyag. Add hozzá a Tudásbázis nézetben arany példaként.</p></div>
+    <div class="card"><h3>5. Gold kuráció</h3><p>A generált szövegekből jelöld ki az 5-7 legjobbat arany példának, a 3 leggyengébbet rossz példának.</p></div>
+  </div>
+</section>
+
+<!-- 10 · LÉPÉS 6 -->
+<section class="slide dark">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">10 / 13</span></div>
+  <div class="steplabel"><span class="stepbig">6</span><span class="kicker" style="margin:0">Lépés · ~30 perc, a legfontosabb</span></div>
+  <h2 class="h1">Vak kalibráció</h2>
+  <ul class="ul">
+    <li>Menj a <b style="color:var(--ti-paper)">Bírók</b> nézetbe, nyomd meg a <b style="color:var(--ti-paper)">„Vak kalibráció indítása"</b> gombot. Ez elindít egy 15-ös köteget.</li>
+    <li>Pontozz le minden emailt (pont + MEHET / NEM MEHET) <b style="color:var(--ti-paper)">anélkül, hogy az AI pontjait néznéd</b>.</li>
+    <li>Ettől tanulja meg az AI-bíró a Te szintedet. Amíg ez nincs meg, a pontjai csak tájékoztatóak, a Te döntésed számít.</li>
+  </ul>
+</section>
+
+<!-- 11 · SÁV-PUSKA -->
+<section class="slide">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">11 / 13</span></div>
+  <div class="kicker">Gyors puska</div>
+  <h2 class="h1" style="margin-bottom:22px">Mit jelentenek a sáv-jelzések</h2>
+  <div>
+    <div class="bandrow"><span class="badge b-ship">SHIP</span><span class="banddesc">Mehet. Minden rendben.</span></div>
+    <div class="bandrow"><span class="badge b-nearly">NEARLY</span><span class="banddesc">Majdnem. Egy hajszál a SHIP-től.</span></div>
+    <div class="bandrow"><span class="badge b-rework">REWORK</span><span class="banddesc">Át kell dolgozni, a minőség a küszöb alatt.</span></div>
+    <div class="bandrow"><span class="badge b-fail">FAIL-FLOOR</span><span class="banddesc">Kemény magyar szabály sérült (pl. „aki" cégre, hiányzó névelő). Azonnali bukás.</span></div>
+    <div class="bandrow"><span class="badge b-lint">LINT-ONLY</span><span class="banddesc">A bíró még nincs a Te szintedre hangolva. A pont csak tájékoztató, <b>a Te ítéleted dönt.</b></span></div>
+  </div>
+</section>
+
+<!-- 12 · VISSZAJELZÉS + KÉRDEZZ -->
+<section class="slide">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">12 / 13</span></div>
+  <div class="kicker">Segítség és visszajelzés</div>
+  <h2 class="h1">Bármikor kérdezhetsz és visszajelezhetsz</h2>
+  <div class="grid g2" style="margin-top:26px">
+    <div class="card"><h3>Kérdezz gomb</h3><p>Jobb alsó sarok. Magyarul, élőben válaszol bármilyen kérdésre a használatról.</p></div>
+    <div class="card"><h3>Visszajelzés nézet</h3><p>Ha valami hibás, zavaró, vagy hiányzik egy funkció, írd be ide. Eljut hozzánk (Ákoshoz és a rendszerhez), és foglalkozunk vele. A visszajelzésed alakítja a tovább­fejlesztést.</p></div>
+  </div>
+</section>
+
+<!-- 13 · KEZDÉS -->
+<section class="slide signal">
+  <div class="topbar"><span class="brandname">targetive<span>.ai</span></span><span class="pageno">13 / 13</span></div>
+  <div class="kicker">Kezdés</div>
+  <h2 class="display" style="font-size:56px;max-width:900px">Kezdd az 1. lépéssel, haladj sorban</h2>
+  <p class="lead" style="margin-top:20px">Nincs kapkodás. A 3. (Értékelés) és a 6. (Vak kalibráció) a két legfontosabb. A to-do listád a Feladatok nézetben vár.</p>
+  <a class="linkbtn" href="https://copylab.targetive.ai" style="background:var(--ti-ink);color:var(--ti-paper)">copylab.targetive.ai megnyitása</a>
+  <svg class="watermark" viewBox="120 93 135 189"><path fill="currentColor" d="M 265.472656 93.035156 C 266.230469 93.40625 265.875 98.761719 265.871094 100 L 265.910156 109.679688 L 265.847656 139.339844 L 265.855469 231.117188 C 255.441406 231.03125 245.027344 231.03125 234.613281 231.113281 C 228.617188 231.152344 222.746094 231.023438 216.738281 231.167969 L 216.71875 194.632812 C 216.71875 192.652344 217.027344 184.640625 216.726562 183.34375 C 215.417969 183.921875 206.765625 192.984375 205.140625 194.609375 L 174.3125 225.699219 C 173.363281 226.667969 169.554688 230.148438 169.273438 231.085938 L 169.476562 231.378906 C 171.511719 231.699219 178.550781 231.320312 181.226562 231.371094 C 192.949219 231.570312 204.789062 231.265625 216.511719 231.441406 C 216.34375 248.210938 216.636719 265.039062 216.519531 281.796875 L 192.371094 281.800781 C 183.484375 281.894531 174.597656 281.867188 165.714844 281.722656 C 143.0625 280.140625 125.703125 263.816406 121.261719 241.765625 C 118.445312 227.585938 121.941406 212.882812 130.835938 201.488281 C 132.800781 198.984375 135.027344 196.785156 137.234375 194.496094 C 140.621094 190.980469 144.039062 187.488281 147.480469 184.023438 L 173.546875 157.765625 C 176.898438 154.398438 180.246094 151.019531 183.605469 147.65625 C 184.308594 146.953125 186.066406 145.507812 185.851562 144.550781 C 180.941406 144.242188 173.671875 144.558594 168.550781 144.558594 L 134.480469 144.5 C 134.136719 132.773438 134.644531 120.800781 134.441406 109.050781 C 134.351562 103.890625 134.332031 98.261719 134.613281 93.136719 L 224.503906 93.105469 L 250.949219 93.113281 C 255.679688 93.109375 260.761719 93.195312 265.472656 93.035156 Z"></path></svg>
+</section>
+
+</main>
+<nav class="nav"><a href="#" onclick="document.querySelector('.slide').scrollIntoView();return false">↑</a><a href="#" onclick="document.querySelectorAll('.slide')[document.querySelectorAll('.slide').length-1].scrollIntoView();return false">↓</a></nav>
+</body>
+</html>
