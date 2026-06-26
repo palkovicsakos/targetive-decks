@@ -200,9 +200,11 @@ section{position:relative}
    ============================================================ */
 .how{padding:96px 0;background:var(--ti-ink);color:var(--ti-paper);position:relative;overflow:hidden}
 .how::before{
-  content:"";position:absolute;left:50%;top:-100px;width:600px;height:600px;
-  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='120 93 135 189'><path fill='%2384CC16' d='M265.4 93c.7.4.4 5.7.4 6.9l.04 9.7-.07 29.7.01 91.7c-10.4-.1-20.8-.1-31.2 0-6 .05-11.9-.08-17.9.07l-.02-36.5c0-2-.3-10 .05-11.3-1.3.6-9.96 9.7-11.6 11.3l-30.8 31.1c-1 .97-4.8 4.45-5.04 5.39l.2.3c2.03.32 9.07-.06 11.74-.01 11.7.2 23.6-.1 35.3.07-.2 16.8.1 33.6-.02 50.3l-24.1.01c-8.9.1-17.8.06-26.6-.08-22.7-1.6-40-17.9-44.4-39.96-2.8-14.2.6-28.9 9.5-40.3 2-2.5 4.2-4.7 6.4-7 3.4-3.5 6.8-7 10.2-10.5l26.1-26.25c3.4-3.37 6.7-6.75 10.1-10.1.7-.7 2.5-2.15 2.27-3.1-4.9-.32-12.2 0-17.3 0l-34.1-.06c-.35-11.7.16-23.7-.05-35.43-.09-5.16-.11-10.79.17-15.92l89.9-.03h76.5c4.7 0 9.8.08 14.5-.08Z'/></svg>") center/contain no-repeat;
-  opacity:.05;transform:translateX(-50%);pointer-events:none;
+  /* dot-grid texture (was: duplicated arrow watermark) */
+  content:"";position:absolute;inset:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34'><circle cx='2' cy='2' r='1.4' fill='%23A3E635'/></svg>");
+  background-size:34px 34px;
+  opacity:.10;pointer-events:none;
 }
 .how .section-head h2{color:var(--ti-paper)}
 .how .lead{color:#CBD5E1}
@@ -260,9 +262,10 @@ section{position:relative}
    ============================================================ */
 .offer{padding:96px 0;background:var(--ti-deep);color:var(--ti-paper);position:relative;overflow:hidden}
 .offer::before{
-  content:"";position:absolute;right:-200px;bottom:-200px;width:700px;height:700px;
-  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='120 93 135 189'><path fill='%23A3E635' d='M265.4 93c.7.4.4 5.7.4 6.9l.04 9.7-.07 29.7.01 91.7c-10.4-.1-20.8-.1-31.2 0-6 .05-11.9-.08-17.9.07l-.02-36.5c0-2-.3-10 .05-11.3-1.3.6-9.96 9.7-11.6 11.3l-30.8 31.1c-1 .97-4.8 4.45-5.04 5.39l.2.3c2.03.32 9.07-.06 11.74-.01 11.7.2 23.6-.1 35.3.07-.2 16.8.1 33.6-.02 50.3l-24.1.01c-8.9.1-17.8.06-26.6-.08-22.7-1.6-40-17.9-44.4-39.96-2.8-14.2.6-28.9 9.5-40.3 2-2.5 4.2-4.7 6.4-7 3.4-3.5 6.8-7 10.2-10.5l26.1-26.25c3.4-3.37 6.7-6.75 10.1-10.1.7-.7 2.5-2.15 2.27-3.1-4.9-.32-12.2 0-17.3 0l-34.1-.06c-.35-11.7.16-23.7-.05-35.43-.09-5.16-.11-10.79.17-15.92l89.9-.03h76.5c4.7 0 9.8.08 14.5-.08Z'/></svg>") center/contain no-repeat;
-  opacity:.10;pointer-events:none;
+  /* concentric target-rings (was: duplicated arrow watermark) */
+  content:"";position:absolute;right:-160px;bottom:-160px;width:640px;height:640px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'><g fill='none' stroke='%23A3E635' stroke-width='2'><circle cx='200' cy='200' r='190'/><circle cx='200' cy='200' r='150'/><circle cx='200' cy='200' r='110'/><circle cx='200' cy='200' r='70'/></g><circle cx='200' cy='200' r='6' fill='%23A3E635'/></svg>") center/contain no-repeat;
+  opacity:.22;pointer-events:none;
 }
 .offer-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:center;position:relative;z-index:2}
 @media(max-width:980px){.offer-grid{grid-template-columns:1fr;gap:40px}}
@@ -323,9 +326,10 @@ section{position:relative}
    ============================================================ */
 .final{padding:96px 0 64px;background:var(--ti-ink);color:var(--ti-paper);text-align:center;position:relative;overflow:hidden}
 .final::before{
-  content:"";position:absolute;left:50%;top:50%;width:1000px;height:1000px;
-  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='120 93 135 189'><path fill='%2384CC16' d='M265.4 93c.7.4.4 5.7.4 6.9l.04 9.7-.07 29.7.01 91.7c-10.4-.1-20.8-.1-31.2 0-6 .05-11.9-.08-17.9.07l-.02-36.5c0-2-.3-10 .05-11.3-1.3.6-9.96 9.7-11.6 11.3l-30.8 31.1c-1 .97-4.8 4.45-5.04 5.39l.2.3c2.03.32 9.07-.06 11.74-.01 11.7.2 23.6-.1 35.3.07-.2 16.8.1 33.6-.02 50.3l-24.1.01c-8.9.1-17.8.06-26.6-.08-22.7-1.6-40-17.9-44.4-39.96-2.8-14.2.6-28.9 9.5-40.3 2-2.5 4.2-4.7 6.4-7 3.4-3.5 6.8-7 10.2-10.5l26.1-26.25c3.4-3.37 6.7-6.75 10.1-10.1.7-.7 2.5-2.15 2.27-3.1-4.9-.32-12.2 0-17.3 0l-34.1-.06c-.35-11.7.16-23.7-.05-35.43-.09-5.16-.11-10.79.17-15.92l89.9-.03h76.5c4.7 0 9.8.08 14.5-.08Z'/></svg>") center/contain no-repeat;
-  opacity:.06;transform:translate(-50%,-50%);pointer-events:none;
+  /* single large faint ring (was: duplicated arrow watermark) */
+  content:"";position:absolute;left:50%;top:50%;width:1100px;height:1100px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000'><circle cx='500' cy='500' r='470' fill='none' stroke='%2384CC16' stroke-width='2'/><circle cx='500' cy='500' r='300' fill='none' stroke='%2384CC16' stroke-width='1.5' opacity='.5'/></svg>") center/contain no-repeat;
+  opacity:.18;transform:translate(-50%,-50%);pointer-events:none;
 }
 .final h2{font-size:clamp(36px,5vw,64px);font-weight:800;letter-spacing:-.035em;line-height:1.02;color:var(--ti-paper);max-width:14ch;margin:0 auto 22px;position:relative}
 .final p{font-size:18px;color:#CBD5E1;max-width:54ch;margin:0 auto 36px;position:relative}
@@ -347,8 +351,8 @@ section{position:relative}
 .sticky-cta .trial b{color:var(--ti-air)}
 .sticky-cta .btn{padding:10px 18px;font-size:13px}
 .sticky-cta .close{
-  width:22px;height:22px;background:rgba(255,255,255,.08);border:none;color:#94A3B8;
-  border-radius:50%;cursor:pointer;font-size:14px;line-height:1;flex:none;
+  width:36px;height:36px;background:rgba(255,255,255,.08);border:none;color:#94A3B8;
+  border-radius:50%;cursor:pointer;font-size:16px;line-height:1;flex:none;
 }
 .sticky-cta .close:hover{background:rgba(255,255,255,.15);color:var(--ti-paper)}
 @media(max-width:560px){.sticky-cta{font-size:12px;padding:8px 8px 8px 16px}.sticky-cta .hide-sm{display:none}}
@@ -362,6 +366,24 @@ section{position:relative}
 .footer-meta{font-size:12px;line-height:1.7}
 .footer-meta a{color:#94A3B8}
 .footer-meta a:hover{color:var(--ti-paper)}
+
+/* ---------- touch / mobile hardening ---------- */
+/* solid nav fallback when backdrop-filter is unsupported (low-end mobile) */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  .nav{background:var(--ti-bone)}
+}
+/* tap feedback where hover is the only signal (touch devices get nothing otherwise) */
+.btn:active{transform:translateY(0) scale(.98)}
+.case:active{transform:translateY(-1px)}
+.funnel-viz .row:active{transform:translateX(3px)}
+.faq-q:active{color:var(--ti-deep)}
+/* mobile: shrink hero arrow so it can't dominate a narrow screen */
+@media(max-width:560px){
+  .hero::after{width:440px;height:440px;right:-120px;top:40px}
+  .offer::before{width:420px;height:420px;right:-130px;bottom:-130px}
+  .final::before{width:680px;height:680px}
+  .statement-inner{gap:28px}
+}
 
 /* ---------- entrance anims ---------- */
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
@@ -684,7 +706,7 @@ section{position:relative}
 
 <!-- ============ STICKY CTA ============ -->
 <div class="sticky-cta" id="sticky-cta">
-  <span class="trial"><b>7-day trial</b> · no card</span>
+  <span class="trial hide-sm"><b>7-day trial</b> · no card</span>
   <a href="#offer" class="btn btn-primary">Start free
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
   </a>
@@ -745,29 +767,46 @@ section{position:relative}
     });
   }
 
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      }
-    });
-  }, {threshold:.15});
-  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  var reveals = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:.12, rootMargin:'0px 0px -8% 0px'});
+    reveals.forEach(function(el){ io.observe(el); });
+  } else {
+    reveals.forEach(function(el){ el.classList.add('in'); });
+  }
+  // backstop: never leave reveal content stranded invisible (slow IO / tall mobile sections)
+  window.addEventListener('load', function(){
+    setTimeout(function(){ reveals.forEach(function(el){ el.classList.add('in'); }); }, 1800);
+  });
 
   // engine-mock special anims
   var mock = document.getElementById('engine-mock');
   if(mock){
-    var mio = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if(e.isIntersecting){
-          mock.querySelectorAll('[data-count]').forEach(animateCount);
-          animateFunnelBars(mock);
-          mio.unobserve(mock);
-        }
-      });
-    }, {threshold:.3});
-    mio.observe(mock);
+    var mockFired = false;
+    function fireMock(){
+      if(mockFired) return; mockFired = true;
+      mock.querySelectorAll('[data-count]').forEach(animateCount);
+      animateFunnelBars(mock);
+    }
+    if('IntersectionObserver' in window){
+      var mio = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){ fireMock(); mio.unobserve(mock); }
+        });
+      }, {threshold:.15, rootMargin:'0px 0px -8% 0px'});
+      mio.observe(mock);
+    } else { fireMock(); }
+    // backstop: if the mock never crossed threshold on mobile, still fire so KPIs aren't stuck at 0
+    window.addEventListener('load', function(){
+      setTimeout(function(){ if(!mockFired) fireMock(); }, 1800);
+    });
   }
 
   // FAQ accordion
