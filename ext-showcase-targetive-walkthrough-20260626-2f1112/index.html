@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>targetive.ai · walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ── THEME: TARGETIVE (lime / navy — real tokens from targetive-brand) ── */
+:root{
+  --ink:#0F172A; --deep:#14532D; --signal:#84CC16; --air:#A3E635;
+  --paper:#F5F7F0; --paper-2:#E8EEDF; --bone:#FAFCF6; --line:#DDE1D0; --line-2:#1F2E2C; --mute:#6B7280;
+  --accent:var(--signal); --accent-on-dark:var(--air); --mute-on-dark:#8A9A86; --lead-on-dark:#C2D6A8;
+  --on-dark-soft:#DCE7CC; --lead-on-signal:#14532D;
+  --r-btn:8px; --r-card:14px; --r-card-lg:16px; --r-hero:18px; --r-pill:999px;
+  --shadow:rgba(15,23,42,.06); --shadow-lg:rgba(15,23,42,.07);
+  --shadow-card:0 1px 2px rgba(15,23,42,.06); --shadow-card-lg:0 2px 6px rgba(15,23,42,.07);
+  --shadow-hero:0 30px 60px -30px rgba(15,23,42,.25), 0 4px 12px -6px rgba(15,23,42,.15);
+  --display:'Inter',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--bone);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);letter-spacing:-.02em;line-height:1.05}
+.deck{scroll-snap-type:y mandatory;height:100vh;overflow-y:scroll}
+.slide{scroll-snap-align:start;min-height:100vh;width:100%;display:flex;flex-direction:column;justify-content:center;padding:6vh 7vw;position:relative}
+.slide-inner{max-width:1180px;margin:0 auto;width:100%;position:relative;z-index:1}
+.s-paper{background:var(--paper)} .s-paper-2{background:var(--paper-2)} .s-bone{background:var(--bone)}
+.s-ink{background:var(--ink);color:var(--paper)} .s-signal{background:var(--signal);color:var(--ink)} .s-air{background:var(--air);color:var(--ink)}
+.kicker{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--accent);margin-bottom:1.4rem}
+.s-ink .kicker{color:var(--accent-on-dark)} .s-signal .kicker{color:var(--ink)} .s-air .kicker{color:var(--deep)}
+.h-hero{font-size:clamp(2.6rem,7vw,5.4rem);font-weight:900;letter-spacing:-.035em;line-height:1.02}
+.h-title{font-size:clamp(2rem,5vw,3.5rem);font-weight:800;line-height:1.04}
+.lead{font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:400;color:var(--mute);max-width:54ch;line-height:1.5;margin-top:1.5rem}
+.s-ink .lead{color:var(--lead-on-dark)} .s-signal .lead{color:var(--lead-on-signal);opacity:.95} .s-air .lead{color:var(--deep)}
+.accent{color:var(--accent)} .s-ink .accent{color:var(--accent-on-dark)} .s-signal .accent,.s-air .accent{color:var(--ink)}
+.cap{font-size:.84rem;color:var(--mute);margin-top:1.4rem;max-width:60ch;line-height:1.45}
+.s-ink .cap{color:var(--mute-on-dark)}
+
+/* arrow mark */
+.tmark{display:inline-block;line-height:0} .tmark svg{display:block}
+
+/* stat grid */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-card-lg);overflow:hidden;margin-top:2.5rem}
+.s-ink .stat-grid{background:var(--line-2);border-color:var(--line-2)}
+.stat{background:var(--paper);padding:2rem 1.6rem} .s-ink .stat{background:var(--ink)} .s-bone .stat{background:var(--bone)}
+.stat .num{font-family:var(--display);font-size:clamp(2.2rem,4.4vw,3.4rem);font-weight:900;letter-spacing:-.04em;line-height:1}
+.stat .unit{color:var(--accent)} .s-ink .stat .unit{color:var(--accent-on-dark)}
+.stat .lbl{margin-top:.7rem;font-size:.84rem;font-weight:600;color:var(--mute);line-height:1.3} .s-ink .stat .lbl{color:var(--mute-on-dark)}
+
+/* two-up stat (proof) */
+.stat-2{grid-template-columns:repeat(2,1fr)}
+
+/* big number */
+.bignum{font-family:var(--display);font-weight:900;letter-spacing:-.05em;line-height:.9;font-size:clamp(5rem,18vw,13rem)}
+.bignum .unit{color:var(--accent)}
+
+/* dom grid */
+.dom-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:2.2rem}
+.dom{background:var(--paper-2);border-radius:var(--r-card);padding:1.2rem 1.15rem;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:.45rem}
+.s-ink .dom{background:#16213c}
+.dom .n{font-family:var(--display);font-size:.82rem;font-weight:800;color:var(--deep)} .s-ink .dom .n{color:var(--accent-on-dark)}
+.dom .t{font-family:var(--display);font-size:1.04rem;font-weight:800;letter-spacing:-.01em;color:var(--ink)} .s-ink .dom .t{color:var(--paper)}
+.dom .d{font-size:.8rem;color:var(--mute);line-height:1.4} .s-ink .dom .d{color:var(--lead-on-dark)}
+
+/* not -> is contrast */
+.nt-list{display:flex;flex-direction:column;gap:14px;margin-top:2.2rem}
+.nt{background:var(--paper);border-radius:12px;padding:1.1rem 1.4rem;box-shadow:0 1px 2px var(--shadow);display:flex;gap:1.1rem;align-items:baseline}
+.s-bone .nt{background:var(--paper)}
+.nt .x{font-family:var(--display);font-weight:900;color:var(--mute);font-size:1rem;min-width:3.4ch}
+.nt .y{font-family:var(--display);font-weight:900;color:var(--accent);font-size:1rem}
+.nt .nt-txt{font-size:.98rem;line-height:1.45} .nt .nt-txt b{font-weight:700}
+
+/* flow */
+.flow{display:flex;align-items:stretch;gap:0;margin-top:2.2rem;flex-wrap:wrap}
+.flow-step{flex:1;min-width:140px;background:var(--bone);border-radius:var(--r-card);padding:1.2rem 1.1rem;box-shadow:var(--shadow-card);position:relative}
+.s-bone .flow-step{background:var(--paper)}
+.flow-arrow{display:flex;align-items:center;padding:0 .45rem;color:var(--accent);font-weight:800;font-size:1.25rem}
+.flow-step .sn{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.flow-step .st{font-family:var(--display);font-weight:800;font-size:1rem;margin-top:.5rem;letter-spacing:-.01em}
+.flow-step .sd{font-size:.76rem;color:var(--mute);margin-top:.4rem;line-height:1.4}
+.flow-step.loop{background:var(--ink);color:var(--paper)}
+.flow-step.loop .st{color:var(--paper)} .flow-step.loop .sn{color:var(--accent-on-dark)} .flow-step.loop .sd{color:var(--lead-on-dark)}
+
+/* feature grid (agents) */
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:2.2rem}
+.feature{background:var(--paper);border-radius:16px;padding:1.7rem 1.7rem;box-shadow:0 2px 6px var(--shadow-lg)}
+.feature .cmd{font-family:var(--display);font-weight:900;font-size:1.35rem;letter-spacing:-.02em;color:var(--ink)}
+.feature .role{font-family:var(--display);font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-top:.25rem;color:var(--deep)}
+.feature .desc{font-size:.92rem;color:var(--mute);line-height:1.5;margin-top:.9rem}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.8rem}
+.chip{font-size:.8rem;font-weight:600;padding:6px 13px;border-radius:var(--r-pill);background:var(--paper-2);color:var(--deep)}
+
+/* two-col compare (build state) */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:2.4rem}
+.cmp-col{background:var(--paper);border-radius:var(--r-card-lg);padding:1.7rem 1.7rem;box-shadow:var(--shadow-card-lg)}
+.cmp-col.cmp-now{background:var(--ink);color:var(--paper)}
+.cmp-tag{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:1.2rem}
+.cmp-now .cmp-tag{color:var(--accent-on-dark)}
+.cmp-col ul{list-style:none;display:flex;flex-direction:column;gap:.85rem}
+.cmp-col li{font-size:.96rem;line-height:1.4;padding-left:1.3rem;position:relative;color:var(--ink)}
+.cmp-col li::before{content:"";position:absolute;left:0;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.cmp-now li{color:var(--on-dark-soft)} .cmp-now li::before{background:var(--accent-on-dark)}
+
+/* diagram wrap */
+.d2wrap{margin-top:2rem;background:var(--bone);border:1px solid var(--line);border-radius:var(--r-card-lg);padding:24px 22px;box-shadow:var(--shadow-card-lg)}
+.s-ink .d2wrap{background:#16213c;border-color:var(--line-2)}
+.d2wrap svg{max-width:100%;height:auto;display:block;margin:0 auto}
+
+/* pull quote */
+.pull{font-family:var(--display);font-weight:800;font-size:clamp(1.9rem,4.4vw,3.2rem);letter-spacing:-.025em;line-height:1.12}
+.s-ink .pull{color:var(--paper)}
+
+/* nav */
+.counter{position:fixed;bottom:26px;right:30px;z-index:50;font-family:var(--display);font-weight:700;font-size:.82rem;letter-spacing:.04em;color:var(--mute);background:rgba(245,247,240,.9);padding:.4rem .8rem;border-radius:999px;border:1px solid var(--line)}
+.counter b{color:var(--accent)}
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:50;width:0;transition:width .25s ease}
+.hint{position:fixed;bottom:26px;left:30px;z-index:50;font-size:.74rem;font-weight:600;letter-spacing:.04em;color:var(--mute)}
+.hint span{color:var(--accent);font-weight:700}
+
+@media (max-width:920px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)} .stat-2{grid-template-columns:repeat(2,1fr)}
+  .dom-grid{grid-template-columns:1fr} .feature-grid,.cmp{grid-template-columns:1fr}
+  .flow{flex-direction:column} .flow-arrow{transform:rotate(90deg);padding:.3rem 0}
+}
+@page{size:A4 landscape;margin:0}
+@media print{
+  html,body{height:auto;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{height:auto;overflow:visible;scroll-snap-type:none;display:block}
+  .slide{min-height:auto;height:100vh;width:100%;page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid;display:flex}
+  .slide:last-child{page-break-after:auto;break-after:auto}
+  .counter,.progress,.hint{display:none!important}
+  .h-hero{font-size:3.4rem} .h-title{font-size:2.3rem}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="counter"><b id="cur">01</b> / <span id="tot">01</span></div>
+<div class="hint">scroll or <span>&uarr; &darr; &rarr; &larr;</span> to navigate</div>
+
+<main class="deck" id="deck">
+
+<!-- 1 · COVER -->
+<section class="slide s-ink" data-pattern="title">
+  <div class="slide-inner">
+    <div class="tmark" style="color:var(--air);margin-bottom:2rem"><svg width="52" viewBox="120 93 135 189" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M 265.472656 93.035156 C 266.230469 93.40625 265.875 98.761719 265.871094 100 L 265.910156 109.679688 L 265.847656 139.339844 L 265.855469 231.117188 C 255.441406 231.03125 245.027344 231.03125 234.613281 231.113281 C 228.617188 231.152344 222.746094 231.023438 216.738281 231.167969 L 216.71875 194.632812 C 216.71875 192.652344 217.027344 184.640625 216.726562 183.34375 C 215.417969 183.921875 206.765625 192.984375 205.140625 194.609375 L 174.3125 225.699219 C 173.363281 226.667969 169.554688 230.148438 169.273438 231.085938 L 169.476562 231.378906 C 171.511719 231.699219 178.550781 231.320312 181.226562 231.371094 C 192.949219 231.570312 204.789062 231.265625 216.511719 231.441406 C 216.34375 248.210938 216.636719 265.039062 216.519531 281.796875 L 192.371094 281.800781 C 183.484375 281.894531 174.597656 281.867188 165.714844 281.722656 C 143.0625 280.140625 125.703125 263.816406 121.261719 241.765625 C 118.445312 227.585938 121.941406 212.882812 130.835938 201.488281 C 132.800781 198.984375 135.027344 196.785156 137.234375 194.496094 C 140.621094 190.980469 144.039062 187.488281 147.480469 184.023438 L 173.546875 157.765625 C 176.898438 154.398438 180.246094 151.019531 183.605469 147.65625 C 184.308594 146.953125 186.066406 145.507812 185.851562 144.550781 C 180.941406 144.242188 173.671875 144.558594 168.550781 144.558594 L 134.480469 144.5 C 134.136719 132.773438 134.644531 120.800781 134.441406 109.050781 C 134.351562 103.890625 134.332031 98.261719 134.613281 93.136719 L 224.503906 93.105469 L 250.949219 93.113281 C 255.679688 93.109375 260.761719 93.195312 265.472656 93.035156 Z M 265.472656 93.035156 "></path></svg></div>
+    <div class="kicker">targetive.ai &middot; a walkthrough for Patrik &amp; G&aacute;bor</div>
+    <h1 class="h-hero">The lead-gen machine<br>I built, <span class="accent">end to end</span></h1>
+    <p class="lead">How I set up targetive.ai HQ, the delivery model, the app, the flywheel, and the agent stack that runs the whole thing.</p>
+  </div>
+</section>
+
+<!-- 2 · THE PROBLEM -->
+<section class="slide s-signal" data-pattern="pain">
+  <div class="slide-inner">
+    <div class="kicker">The problem</div>
+    <h2 class="h-title">Hungarian B2B firms have no predictable way to fill their pipeline</h2>
+    <p class="lead">Referrals run dry. Cold outreach is technically brutal to run well. Most founders never build the system, so the pipeline stays empty.</p>
+  </div>
+</section>
+
+<!-- 3 · WHAT IT IS -->
+<section class="slide s-paper" data-pattern="contrast">
+  <div class="slide-inner">
+    <div class="kicker">What it is</div>
+    <h2 class="h-title">Done-for-you cold outbound, priced on <span class="accent">booked meetings</span></h2>
+    <div class="nt-list">
+      <div class="nt"><span class="x">Not</span><span class="nt-txt">a tool you have to learn and operate</span></div>
+      <div class="nt"><span class="y">Is</span><span class="nt-txt">a service that runs the <b>whole machine</b> for you: list, copy, sending, replies, booking</span></div>
+      <div class="nt"><span class="x">Not</span><span class="nt-txt">paid for activity or "more emails sent"</span></div>
+      <div class="nt"><span class="y">Is</span><span class="nt-txt">paid for the <b>outcome</b>: meetings landed on your calendar</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · PROOF -->
+<section class="slide s-bone" data-pattern="proof">
+  <div class="slide-inner">
+    <div class="kicker">Proof &middot; client results</div>
+    <h2 class="h-title">What the machine has done for clients</h2>
+    <div class="stat-grid stat-2">
+      <div class="stat"><div class="num">47<span class="unit">&times;</span></div><div class="lbl">Si&oacute; &mdash; campaign result vs their manual outreach</div></div>
+      <div class="stat"><div class="num">197<span class="unit">&times;</span></div><div class="lbl">CARRIES &mdash; campaign result vs their manual outreach</div></div>
+    </div>
+    <p class="cap">Real, measured client campaign results (source: Targetive metrics). These are what we use to sell, not a promised outcome for any new client.</p>
+  </div>
+</section>
+
+<!-- 5 · SYSTEM MAP (D2) -->
+<section class="slide s-paper-2" data-pattern="architecture">
+  <div class="slide-inner">
+    <div class="kicker">The big picture</div>
+    <h2 class="h-title">One system, <span class="accent">two faces</span></h2>
+    <div class="d2wrap"><?xml version="1.0" encoding="utf-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1756 334"><svg class="d2-3953504922 d2-svg" width="1756" height="334" viewBox="-21 -21 1756 334"><rect x="-21.000000" y="-21.000000" width="1756.000000" height="334.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-3953504922 .text-bold {
+	font-family: "d2-3953504922-font-bold";
+}
+@font-face {
+	font-family: d2-3953504922-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-3953504922 .text-italic {
+	font-family: "d2-3953504922-font-italic";
+}
+@font-face {
+	font-family: d2-3953504922-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-3953504922 .fill-N1{fill:#0A0F25;}
+		.d2-3953504922 .fill-N2{fill:#676C7E;}
+		.d2-3953504922 .fill-N3{fill:#9499AB;}
+		.d2-3953504922 .fill-N4{fill:#CFD2DD;}
+		.d2-3953504922 .fill-N5{fill:#DEE1EB;}
+		.d2-3953504922 .fill-N6{fill:#EEF1F8;}
+		.d2-3953504922 .fill-N7{fill:#FFFFFF;}
+		.d2-3953504922 .fill-B1{fill:#0D32B2;}
+		.d2-3953504922 .fill-B2{fill:#0D32B2;}
+		.d2-3953504922 .fill-B3{fill:#E3E9FD;}
+		.d2-3953504922 .fill-B4{fill:#E3E9FD;}
+		.d2-3953504922 .fill-B5{fill:#EDF0FD;}
+		.d2-3953504922 .fill-B6{fill:#F7F8FE;}
+		.d2-3953504922 .fill-AA2{fill:#4A6FF3;}
+		.d2-3953504922 .fill-AA4{fill:#EDF0FD;}
+		.d2-3953504922 .fill-AA5{fill:#F7F8FE;}
+		.d2-3953504922 .fill-AB4{fill:#EDF0FD;}
+		.d2-3953504922 .fill-AB5{fill:#F7F8FE;}
+		.d2-3953504922 .stroke-N1{stroke:#0A0F25;}
+		.d2-3953504922 .stroke-N2{stroke:#676C7E;}
+		.d2-3953504922 .stroke-N3{stroke:#9499AB;}
+		.d2-3953504922 .stroke-N4{stroke:#CFD2DD;}
+		.d2-3953504922 .stroke-N5{stroke:#DEE1EB;}
+		.d2-3953504922 .stroke-N6{stroke:#EEF1F8;}
+		.d2-3953504922 .stroke-N7{stroke:#FFFFFF;}
+		.d2-3953504922 .stroke-B1{stroke:#0D32B2;}
+		.d2-3953504922 .stroke-B2{stroke:#0D32B2;}
+		.d2-3953504922 .stroke-B3{stroke:#E3E9FD;}
+		.d2-3953504922 .stroke-B4{stroke:#E3E9FD;}
+		.d2-3953504922 .stroke-B5{stroke:#EDF0FD;}
+		.d2-3953504922 .stroke-B6{stroke:#F7F8FE;}
+		.d2-3953504922 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-3953504922 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-3953504922 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-3953504922 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-3953504922 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-3953504922 .background-color-N1{background-color:#0A0F25;}
+		.d2-3953504922 .background-color-N2{background-color:#676C7E;}
+		.d2-3953504922 .background-color-N3{background-color:#9499AB;}
+		.d2-3953504922 .background-color-N4{background-color:#CFD2DD;}
+		.d2-3953504922 .background-color-N5{background-color:#DEE1EB;}
+		.d2-3953504922 .background-color-N6{background-color:#EEF1F8;}
+		.d2-3953504922 .background-color-N7{background-color:#FFFFFF;}
+		.d2-3953504922 .background-color-B1{background-color:#0D32B2;}
+		.d2-3953504922 .background-color-B2{background-color:#0D32B2;}
+		.d2-3953504922 .background-color-B3{background-color:#E3E9FD;}
+		.d2-3953504922 .background-color-B4{background-color:#E3E9FD;}
+		.d2-3953504922 .background-color-B5{background-color:#EDF0FD;}
+		.d2-3953504922 .background-color-B6{background-color:#F7F8FE;}
+		.d2-3953504922 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-3953504922 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-3953504922 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-3953504922 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-3953504922 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-3953504922 .color-N1{color:#0A0F25;}
+		.d2-3953504922 .color-N2{color:#676C7E;}
+		.d2-3953504922 .color-N3{color:#9499AB;}
+		.d2-3953504922 .color-N4{color:#CFD2DD;}
+		.d2-3953504922 .color-N5{color:#DEE1EB;}
+		.d2-3953504922 .color-N6{color:#EEF1F8;}
+		.d2-3953504922 .color-N7{color:#FFFFFF;}
+		.d2-3953504922 .color-B1{color:#0D32B2;}
+		.d2-3953504922 .color-B2{color:#0D32B2;}
+		.d2-3953504922 .color-B3{color:#E3E9FD;}
+		.d2-3953504922 .color-B4{color:#E3E9FD;}
+		.d2-3953504922 .color-B5{color:#EDF0FD;}
+		.d2-3953504922 .color-B6{color:#F7F8FE;}
+		.d2-3953504922 .color-AA2{color:#4A6FF3;}
+		.d2-3953504922 .color-AA4{color:#EDF0FD;}
+		.d2-3953504922 .color-AA5{color:#F7F8FE;}
+		.d2-3953504922 .color-AB4{color:#EDF0FD;}
+		.d2-3953504922 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-3953504922);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-3953504922);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-3953504922);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-3953504922);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-3953504922);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-3953504922);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-3953504922);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-3953504922);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="dGVhbQ=="><g class="shape" ><path d="M 521 66 H 425 V 65 C 425 54 436 44 452 39 C 443 35 438 28 438 21 C 438 10 453 0 473 0 C 493 0 508 10 508 21 C 508 28 503 34 493 38 C 510 43 520 53 520 64 V 65 H 521 Z" stroke="#14532D" fill="#F5F7F0" style="stroke-width:2;" /></g><text x="473.000000" y="87.000000" fill="#0F172A" class="text-bold" style="text-anchor:middle;font-size:16px">Ákos + Kitti</text></g><g class="ZW5naW5l"><g class="shape" ><rect x="0.000000" y="157.000000" width="178.000000" height="82.000000" rx="10.000000" stroke="#DDE1D0" fill="#E8EEDF" style="stroke-width:2;" /></g><text x="89.000000" y="195.500000" fill="#0F172A" class="text-bold" style="text-anchor:middle;font-size:16px"><tspan x="89.000000" dy="0.000000">Enrichment engine</tspan><tspan x="89.000000" dy="18.500000">runs 24/7</tspan></text></g><g class="ZGI="><g class="shape" ><rect x="393.000000" y="157.000000" width="159.000000" height="82.000000" rx="10.000000" stroke="#14532D" fill="#14532D" style="stroke-width:2;" /></g><text x="472.500000" y="195.500000" fill="#F5F7F0" class="text-bold" style="text-anchor:middle;font-size:16px"><tspan x="472.500000" dy="0.000000">Master DB</tspan><tspan x="472.500000" dy="18.500000">450k companies</tspan></text></g><g class="aHE="><g class="shape" ><rect x="785.000000" y="90.000000" width="138.000000" height="82.000000" rx="10.000000" stroke="#0F172A" fill="#0F172A" style="stroke-width:2;" /></g><text x="854.000000" y="128.500000" fill="#F5F7F0" class="text-bold" style="text-anchor:middle;font-size:16px"><tspan x="854.000000" dy="0.000000">Targetive HQ</tspan><tspan x="854.000000" dy="18.500000">team cockpit</tspan></text></g><g class="c2VuZA=="><g class="shape" ><rect x="1142.000000" y="59.000000" width="120.000000" height="82.000000" rx="10.000000" stroke="#84CC16" fill="#84CC16" style="stroke-width:2;" /></g><text x="1202.000000" y="97.500000" fill="#0F172A" class="text-bold" style="text-anchor:middle;font-size:16px"><tspan x="1202.000000" dy="0.000000">Cold email</tspan><tspan x="1202.000000" dy="18.500000">Instantly</tspan></text></g><g class="YXBw"><g class="shape" ><rect x="1540.000000" y="126.000000" width="174.000000" height="82.000000" rx="10.000000" stroke="#0F172A" fill="#0F172A" style="stroke-width:2;" /></g><text x="1627.000000" y="164.500000" fill="#F5F7F0" class="text-bold" style="text-anchor:middle;font-size:16px"><tspan x="1627.000000" dy="0.000000">Client app</tspan><tspan x="1627.000000" dy="18.500000">their own pipeline</tspan></text></g><g class="Y2xpZW50"><g class="shape" ><path d="M 1231 267 H 1174 V 266 C 1174 255 1180 245 1190 240 C 1185 236 1181 229 1181 222 C 1181 211 1191 201 1202 201 C 1214 201 1223 211 1223 222 C 1223 229 1220 235 1214 239 C 1224 244 1230 254 1230 265 V 266 H 1231 Z" stroke="#14532D" fill="#F5F7F0" style="stroke-width:2;" /></g><text x="1202.500000" y="288.000000" fill="#0F172A" class="text-bold" style="text-anchor:middle;font-size:16px">Client</text></g><g class="KHRlYW0gLSZndDsgaHEpWzBd"><marker id="mk-d2-3953504922-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 504.000000 33.000000 C 635.200012 33.000000 691.900024 47.599998 782.106379 103.882612" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3953504922-3488378134)" mask="url(#d2-3953504922)" /><text x="652.000000" y="43.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">operate</text></g><g class="KGVuZ2luZSAtJmd0OyBkYilbMF0="><path d="M 179.500000 198.000000 C 263.899994 198.000000 307.100006 198.000000 389.500000 198.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3953504922-3488378134)" mask="url(#d2-3953504922)" /><text x="286.000000" y="204.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">enriches</text></g><g class="KGRiIC0mZ3Q7IGhxKVswXQ=="><path d="M 553.500000 198.000000 C 645.099976 198.000000 691.900024 189.600006 781.735222 157.351460" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3953504922-3488378134)" mask="url(#d2-3953504922)" /><text x="671.000000" y="199.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">scored lists</text></g><g class="KGhxIC0mZ3Q7IHNlbmQpWzBd"><path d="M 924.500000 131.000000 C 1010.500000 131.000000 1054.500000 131.000000 1138.500000 131.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3953504922-3488378134)" mask="url(#d2-3953504922)" /><text x="1033.000000" y="137.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">launches</text></g><g class="KHNlbmQgLSZndDsgYXBwKVswXQ=="><path d="M 1264.000000 100.000000 C 1373.199951 100.000000 1428.800049 108.199997 1536.163418 139.868346" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3953504922-3488378134)" mask="url(#d2-3953504922)" /><text x="1403.500000" y="110.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">replies + meetings</text></g><g class="KGNsaWVudCAtJmd0OyBhcHApWzBd"><path d="M 1221.000000 234.000000 C 1364.599976 234.000000 1428.800049 225.800003 1536.163418 194.131654" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3953504922-3488378134)" mask="url(#d2-3953504922)" /><text x="1381.500000" y="237.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">logs in</text></g><mask id="d2-3953504922" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1756" height="334">
+<rect x="-21" y="-21" width="1756" height="334" fill="white"></rect>
+<rect x="624.000000" y="27.000000" width="56" height="21" fill="black"></rect>
+<rect x="256.000000" y="188.000000" width="60" height="21" fill="black"></rect>
+<rect x="632.000000" y="183.000000" width="78" height="21" fill="black"></rect>
+<rect x="1001.000000" y="121.000000" width="64" height="21" fill="black"></rect>
+<rect x="1342.000000" y="94.000000" width="123" height="21" fill="black"></rect>
+<rect x="1358.000000" y="221.000000" width="47" height="21" fill="black"></rect>
+</mask></svg></svg></div>
+    <p class="cap">A shared brain feeds two surfaces: HQ, where my team drives every client, and the app, where each client watches only their own pipeline.</p>
+  </div>
+</section>
+
+<!-- 6 · TARGETIVE HQ -->
+<section class="slide s-ink" data-pattern="features">
+  <div class="slide-inner">
+    <div class="kicker">Targetive HQ &middot; hq.targetive.ai</div>
+    <h2 class="h-title">The cockpit I run <span class="accent">every client</span> from</h2>
+    <div class="dom-grid">
+      <div class="dom"><div class="n">Overview</div><div class="t">Cross-client KPIs</div><div class="d">Campaigns, reply rates, meetings booked, all clients in one view</div></div>
+      <div class="dom"><div class="n">Master DB</div><div class="t">The company universe</div><div class="d">450k Hungarian companies, enriched and searchable</div></div>
+      <div class="dom"><div class="n">Clients</div><div class="t">Per-client control</div><div class="d">Every account, its segments, its campaigns</div></div>
+      <div class="dom"><div class="n">Enrichment</div><div class="t">Engine controls</div><div class="d">Kill-switch, daily caps, live enrichment status</div></div>
+      <div class="dom"><div class="n">Onboarding</div><div class="t">4-step wizard</div><div class="d">Spin up a new client and its data in minutes</div></div>
+      <div class="dom"><div class="n">Analytics</div><div class="t">30-day funnel</div><div class="d">From sent to reply to booked, per client</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · THE APP -->
+<section class="slide s-paper" data-pattern="features">
+  <div class="slide-inner">
+    <div class="kicker">The client app &middot; app.targetive.ai</div>
+    <h2 class="h-title">What each client sees, and <span class="accent">only theirs</span></h2>
+    <div class="dom-grid">
+      <div class="dom"><div class="n">Dashboard</div><div class="t">Their numbers</div><div class="d">Sent, replied, meetings booked, at a glance</div></div>
+      <div class="dom"><div class="n">Responses</div><div class="t">Approve before send</div><div class="d">Every drafted reply waits for a human yes</div></div>
+      <div class="dom"><div class="n">Light CRM</div><div class="t">Meetings + deals</div><div class="d">Booked calls and where each one stands</div></div>
+      <div class="dom"><div class="n">Segments</div><div class="t">Their target list</div><div class="d">Exactly who is being reached and why</div></div>
+      <div class="dom"><div class="n">Account</div><div class="t">Setup</div><div class="d">Profile, domains, inbox settings</div></div>
+    </div>
+    <p class="cap">Row-level security means each client logs in and sees only their own pipeline, nothing from anyone else.</p>
+  </div>
+</section>
+
+<!-- 8 · DELIVERY MODEL -->
+<section class="slide s-bone" data-pattern="process">
+  <div class="slide-inner">
+    <div class="kicker">The delivery model</div>
+    <h2 class="h-title">Signup to booked meeting, the <span class="accent">assembly line</span></h2>
+    <div class="flow">
+      <div class="flow-step"><div class="sn">01</div><div class="st">Onboard</div><div class="sd">Founder interview, offer clarity, ICP defined</div></div>
+      <div class="flow-arrow">&rsaquo;</div>
+      <div class="flow-step"><div class="sn">02</div><div class="st">Build list</div><div class="sd">Score the master DB to their ICP, verify emails</div></div>
+      <div class="flow-arrow">&rsaquo;</div>
+      <div class="flow-step"><div class="sn">03</div><div class="st">Campaign</div><div class="sd">Native HU copy, A/B variants, inbox warm-up</div></div>
+      <div class="flow-arrow">&rsaquo;</div>
+      <div class="flow-step"><div class="sn">04</div><div class="st">Launch</div><div class="sd">Send via Instantly, daily caps, stop on reply</div></div>
+      <div class="flow-arrow">&rsaquo;</div>
+      <div class="flow-step"><div class="sn">05</div><div class="st">Triage</div><div class="sd">Classify each reply, draft response, human approves</div></div>
+      <div class="flow-arrow">&rsaquo;</div>
+      <div class="flow-step"><div class="sn">06</div><div class="st">Book</div><div class="sd">Positive replies into a booked meeting</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · FLYWHEEL -->
+<section class="slide s-ink" data-pattern="process">
+  <div class="slide-inner">
+    <div class="kicker">The flywheel</div>
+    <h2 class="h-title">Why it <span class="accent">compounds</span></h2>
+    <div class="flow">
+      <div class="flow-step"><div class="sn">01</div><div class="st">Master DB</div><div class="sd">The shared company brain</div></div>
+      <div class="flow-arrow">&rsaquo;</div>
+      <div class="flow-step"><div class="sn">02</div><div class="st">Campaigns</div><div class="sd">Send, learn which copy wins</div></div>
+      <div class="flow-arrow">&rsaquo;</div>
+      <div class="flow-step"><div class="sn">03</div><div class="st">Meetings</div><div class="sd">Replies become booked calls</div></div>
+      <div class="flow-arrow">&rsaquo;</div>
+      <div class="flow-step"><div class="sn">04</div><div class="st">Proof</div><div class="sd">Wins become case studies</div></div>
+      <div class="flow-arrow">&rsaquo;</div>
+      <div class="flow-step loop"><div class="sn">&#8635; back to start</div><div class="st">More clients</div><div class="sd">Each new client enriches the DB and sharpens the copy</div></div>
+    </div>
+    <p class="cap">Every client makes the next one cheaper: the database gets richer, the copy gets smarter, the proof stack grows, all without adding hands.</p>
+  </div>
+</section>
+
+<!-- 10 · SKILL / AGENT STACK -->
+<section class="slide s-paper" data-pattern="features">
+  <div class="slide-inner">
+    <div class="kicker">The agent stack</div>
+    <h2 class="h-title">The team is mostly <span class="accent">software</span></h2>
+    <div class="feature-grid">
+      <div class="feature"><div class="cmd">Jarvis</div><div class="role">My right hand</div><div class="desc">Orchestrates everything, runs the main session, takes work off my plate.</div></div>
+      <div class="feature"><div class="cmd">Darius</div><div class="role">Ops operator</div><div class="desc">Runs delivery and inbox operations, dispatches the delivery skills.</div></div>
+      <div class="feature"><div class="cmd">Atlas</div><div class="role">System improver</div><div class="desc">Watches the system nightly, spots gaps, hardens the infrastructure.</div></div>
+      <div class="feature"><div class="cmd">Cicero</div><div class="role">Marketing &middot; coming</div><div class="desc">Will own demand-gen: warm network, content, nurture, follow-up.</div></div>
+    </div>
+    <div class="chips">
+      <span class="chip">reply-triage-hu</span><span class="chip">cold-email-writer</span><span class="chip">copy-loop</span><span class="chip">icp-score</span><span class="chip">enrichment engine</span><span class="chip">growth-plan deck</span>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · THE MOAT -->
+<section class="slide s-bone" data-pattern="numbers">
+  <div class="slide-inner">
+    <div class="kicker">The moat</div>
+    <h2 class="h-title">A database that gets <span class="accent">better every day</span></h2>
+    <div class="stat-grid">
+      <div class="stat"><div class="num">450<span class="unit">k</span></div><div class="lbl">Company universe, the full target</div></div>
+      <div class="stat"><div class="num">28.5<span class="unit">k</span></div><div class="lbl">Enriched and ready to send today</div></div>
+      <div class="stat"><div class="num">32<span class="unit">k</span></div><div class="lbl">Clean, sendable companies after filtering</div></div>
+      <div class="stat"><div class="num">24<span class="unit">/7</span></div><div class="lbl">Enrichment worker running on the server</div></div>
+    </div>
+    <p class="cap">Loaded today: 28,535 Tier-1 rows on the way to the full 450,351-company universe (source: ICP scoring, OPTEN master). It compounds without adding headcount.</p>
+  </div>
+</section>
+
+<!-- 12 · BUILD STATE -->
+<section class="slide s-paper-2" data-pattern="compare">
+  <div class="slide-inner">
+    <div class="kicker">Where it is now</div>
+    <h2 class="h-title">Live, and still being <span class="accent">built out</span></h2>
+    <div class="cmp">
+      <div class="cmp-col cmp-now">
+        <div class="cmp-tag">Live today</div>
+        <ul>
+          <li>HQ backend + surfaces, deployed and QA-green</li>
+          <li>Client app shell, six surfaces wired</li>
+          <li>Enrichment engine, running 24/7</li>
+          <li>Reply triage + Hungarian cold-email writer</li>
+          <li>Growth-plan deck, shipped to share.targetive.ai</li>
+        </ul>
+      </div>
+      <div class="cmp-col">
+        <div class="cmp-tag">In progress</div>
+        <ul>
+          <li>Async task layer, last env vars to set</li>
+          <li>App go-live, waiting on one DNS record</li>
+          <li>Finance + checkout funnel</li>
+          <li>Cicero, the marketing agent</li>
+          <li>Self-learning copy loop, switching on</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · CLOSE -->
+<section class="slide s-ink" data-pattern="close">
+  <div class="slide-inner">
+    <div class="tmark" style="color:var(--air);margin-bottom:1.8rem"><svg width="52" viewBox="120 93 135 189" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M 265.472656 93.035156 C 266.230469 93.40625 265.875 98.761719 265.871094 100 L 265.910156 109.679688 L 265.847656 139.339844 L 265.855469 231.117188 C 255.441406 231.03125 245.027344 231.03125 234.613281 231.113281 C 228.617188 231.152344 222.746094 231.023438 216.738281 231.167969 L 216.71875 194.632812 C 216.71875 192.652344 217.027344 184.640625 216.726562 183.34375 C 215.417969 183.921875 206.765625 192.984375 205.140625 194.609375 L 174.3125 225.699219 C 173.363281 226.667969 169.554688 230.148438 169.273438 231.085938 L 169.476562 231.378906 C 171.511719 231.699219 178.550781 231.320312 181.226562 231.371094 C 192.949219 231.570312 204.789062 231.265625 216.511719 231.441406 C 216.34375 248.210938 216.636719 265.039062 216.519531 281.796875 L 192.371094 281.800781 C 183.484375 281.894531 174.597656 281.867188 165.714844 281.722656 C 143.0625 280.140625 125.703125 263.816406 121.261719 241.765625 C 118.445312 227.585938 121.941406 212.882812 130.835938 201.488281 C 132.800781 198.984375 135.027344 196.785156 137.234375 194.496094 C 140.621094 190.980469 144.039062 187.488281 147.480469 184.023438 L 173.546875 157.765625 C 176.898438 154.398438 180.246094 151.019531 183.605469 147.65625 C 184.308594 146.953125 186.066406 145.507812 185.851562 144.550781 C 180.941406 144.242188 173.671875 144.558594 168.550781 144.558594 L 134.480469 144.5 C 134.136719 132.773438 134.644531 120.800781 134.441406 109.050781 C 134.351562 103.890625 134.332031 98.261719 134.613281 93.136719 L 224.503906 93.105469 L 250.949219 93.113281 C 255.679688 93.109375 260.761719 93.195312 265.472656 93.035156 Z M 265.472656 93.035156 "></path></svg></div>
+    <div class="kicker">Where it's going</div>
+    <p class="pull">From a service I run,<br>to a system that <span class="accent">runs itself</span></p>
+    <p class="lead">Same machine, more clients, almost no extra hands. That's the whole bet. Happy to show you the live thing.</p>
+  </div>
+</section>
+
+</main>
+<script>
+(function(){
+  const deck=document.getElementById('deck');
+  const slides=Array.from(document.querySelectorAll('.slide'));
+  const total=slides.length;
+  document.getElementById('tot').textContent=String(total).padStart(2,'0');
+  let idx=0;
+  function pad(n){return String(n+1).padStart(2,'0')}
+  function update(){document.getElementById('cur').textContent=pad(idx);document.getElementById('progress').style.width=((idx+1)/total*100)+'%';}
+  function go(n){idx=Math.max(0,Math.min(total-1,n));slides[idx].scrollIntoView({behavior:'smooth'});update();}
+  document.addEventListener('keydown',function(e){
+    if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(idx+1);}
+    else if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(idx-1);}
+    else if(e.key==='Home'){e.preventDefault();go(0);}
+    else if(e.key==='End'){e.preventDefault();go(total-1);}
+  });
+  let t;
+  deck.addEventListener('scroll',function(){clearTimeout(t);t=setTimeout(function(){const mid=deck.scrollTop+window.innerHeight/2;let best=0;slides.forEach(function(s,i){if(s.offsetTop<=mid)best=i;});if(best!==idx){idx=best;update();}},60);});
+  update();
+})();
+</script>
+</body>
+</html>
