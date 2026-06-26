@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>targetive.ai — Books qualified sales calls on autopilot</title>
+<meta name="description" content="AI cold-outbound that builds your list, writes the messages, follows up, and books qualified sales calls on autopilot. Free 7-day trial. No credit card.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TARGETIVE.AI — DESIGN SHOWCASE
+   Brand: Inter only · Signal #84CC16 · Ink #0F172A · no gradients
+   ============================================================ */
+:root{
+  --ti-ink:#0F172A; --ti-deep:#14532D; --ti-signal:#84CC16; --ti-air:#A3E635;
+  --ti-paper:#F5F7F0; --ti-bone:#FAFCF6; --ti-paper-2:#E8EEDF;
+  --ti-line:#DDE1D0; --ti-line-2:#1F2E2C; --ti-mute:#6B7280;
+  --r-sm:8px; --r-md:14px; --r-lg:18px; --r-xl:28px;
+  --sh-card:0 30px 60px -40px rgba(15,23,42,.25),0 8px 20px -12px rgba(15,23,42,.18);
+  --sh-float:0 30px 60px -30px rgba(15,23,42,.25),0 4px 12px -6px rgba(15,23,42,.15);
+  --sh-deep:0 60px 90px -60px rgba(15,23,42,.6),0 30px 50px -30px rgba(15,23,42,.4);
+  --max:1320px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif;
+  color:var(--ti-ink); background:var(--ti-bone);
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  font-size:16px; line-height:1.6; font-weight:400;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+img,svg{display:block;max-width:100%}
+h1,h2,h3,h4{font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ti-deep)}
+.kicker.on-dark{color:var(--ti-air)}
+.kicker.dot::before{content:"";display:inline-block;width:6px;height:6px;background:var(--ti-signal);border-radius:50%;vertical-align:middle;margin-right:10px;transform:translateY(-2px)}
+.lead{font-size:19px;line-height:1.55;color:#334155;font-weight:400;max-width:60ch}
+.lead.on-dark{color:#CBD5E1}
+.container{max-width:var(--max);margin:0 auto;padding:0 32px}
+section{position:relative}
+
+/* ---------- REAL MARK ---------- */
+.mark-svg{width:1em;height:1em;color:currentColor;flex:none}
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-weight:700;font-size:14px;
+  padding:14px 22px;border-radius:var(--r-sm);
+  cursor:pointer;border:none;font-family:inherit;
+  transition:transform .2s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease);
+  letter-spacing:-.01em;
+}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--ti-signal);color:var(--ti-ink)}
+.btn-primary:hover{background:#76B813;transform:translateY(-1px);box-shadow:0 12px 24px -10px rgba(132,204,22,.6)}
+.btn-dark{background:var(--ti-ink);color:var(--ti-paper)}
+.btn-dark:hover{background:#1E293B;transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--ti-ink);border:1px solid var(--ti-line)}
+.btn-outline:hover{background:var(--ti-paper);border-color:#9CA39A}
+.btn-ghost-on-dark{background:transparent;color:var(--ti-paper);border:1px solid var(--ti-line-2)}
+.btn-ghost-on-dark:hover{background:rgba(255,255,255,.05)}
+.btn-lg{padding:18px 30px;font-size:15px}
+
+/* ---------- NAV ---------- */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,252,246,.85);
+  backdrop-filter:saturate(1.4) blur(14px);
+  -webkit-backdrop-filter:saturate(1.4) blur(14px);
+  border-bottom:1px solid var(--ti-line);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px;max-width:var(--max);margin:0 auto;padding:0 32px}
+.wordmark{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.03em}
+.wordmark .mark-svg{width:22px;height:22px;color:var(--ti-ink)}
+.nav-links{display:flex;align-items:center;gap:30px;font-size:14px;font-weight:500;color:#334155}
+.nav-links a:hover{color:var(--ti-ink)}
+.nav-cta{display:flex;align-items:center;gap:12px}
+.trial-pill{font-size:11px;font-weight:600;color:var(--ti-deep);background:var(--ti-paper-2);padding:5px 10px;border-radius:999px;letter-spacing:.02em}
+@media(max-width:880px){.nav-links{display:none}.trial-pill{display:none}}
+
+/* ============================================================
+   HERO — dramatic editorial, asymmetric split
+   ============================================================ */
+.hero{position:relative;background:var(--ti-bone);padding:60px 0 90px;overflow:hidden}
+.hero::after{
+  /* huge faint arrow watermark — only allowed decor */
+  content:"";position:absolute;right:-120px;top:80px;
+  width:720px;height:720px;pointer-events:none;opacity:.045;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='120 93 135 189'><path fill='%230F172A' d='M265.4 93c.7.4.4 5.7.4 6.9l.04 9.7-.07 29.7.01 91.7c-10.4-.1-20.8-.1-31.2 0-6 .05-11.9-.08-17.9.07l-.02-36.5c0-2-.3-10 .05-11.3-1.3.6-9.96 9.7-11.6 11.3l-30.8 31.1c-1 .97-4.8 4.45-5.04 5.39l.2.3c2.03.32 9.07-.06 11.74-.01 11.7.2 23.6-.1 35.3.07-.2 16.8.1 33.6-.02 50.3l-24.1.01c-8.9.1-17.8.06-26.6-.08-22.7-1.6-40-17.9-44.4-39.96-2.8-14.2.6-28.9 9.5-40.3 2-2.5 4.2-4.7 6.4-7 3.4-3.5 6.8-7 10.2-10.5l26.1-26.25c3.4-3.37 6.7-6.75 10.1-10.1.7-.7 2.5-2.15 2.27-3.1-4.9-.32-12.2 0-17.3 0l-34.1-.06c-.35-11.7.16-23.7-.05-35.43-.09-5.16-.11-10.79.17-15.92l89.9-.03h76.5c4.7 0 9.8.08 14.5-.08Z'/></svg>") center/contain no-repeat;
+}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;position:relative;z-index:2}
+@media(max-width:980px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;background:var(--ti-paper);border:1px solid var(--ti-line);border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--ti-deep)}
+.hero-eyebrow .pulse{width:7px;height:7px;background:var(--ti-signal);border-radius:50%;box-shadow:0 0 0 0 rgba(132,204,22,.6);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(132,204,22,.55)}70%{box-shadow:0 0 0 12px rgba(132,204,22,0)}100%{box-shadow:0 0 0 0 rgba(132,204,22,0)}}
+.hero h1{
+  font-size:clamp(46px,7.4vw,96px);font-weight:800;line-height:.96;
+  letter-spacing:-.04em;margin:28px 0 24px;
+}
+.hero h1 .accent{color:var(--ti-deep);position:relative;display:inline-block}
+.hero h1 .accent::after{
+  content:"";position:absolute;left:0;right:0;bottom:.08em;height:.42em;
+  background:var(--ti-signal);z-index:-1;border-radius:3px;
+  transform:skewX(-6deg);
+}
+.hero h1 .underline-accent{position:relative;display:inline-block}
+.hero h1 .underline-accent::after{
+  content:"";position:absolute;left:-2%;right:-2%;bottom:-2px;height:8px;
+  background:var(--ti-signal);border-radius:3px;
+}
+.hero-sub{font-size:19px;line-height:1.55;color:#334155;max-width:54ch;margin-bottom:32px}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:36px}
+.hero-trust{display:flex;flex-wrap:wrap;align-items:center;gap:22px;color:var(--ti-mute);font-size:13px;font-weight:500}
+.hero-trust .item{display:inline-flex;align-items:center;gap:8px}
+.hero-trust svg{width:15px;height:15px;color:var(--ti-deep)}
+
+/* hero dashboard mock — the "engine" preview */
+.engine-mock{
+  position:relative;background:var(--ti-ink);border-radius:var(--r-xl);
+  padding:22px;color:var(--ti-paper);
+  box-shadow:var(--sh-deep);border:1px solid var(--ti-line-2);
+  transform:perspective(1600px) rotateY(-7deg) rotateX(2deg);
+  transition:transform .6s var(--ease);
+}
+.engine-mock:hover{transform:perspective(1600px) rotateY(-2deg) rotateX(0)}
+@media(max-width:980px){.engine-mock{transform:none}}
+.engine-bar{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--ti-line-2);margin-bottom:18px}
+.engine-tabs{display:flex;gap:14px;font-size:11px;font-weight:600;letter-spacing:.06em;color:#94A3B8;text-transform:uppercase}
+.engine-tabs .active{color:var(--ti-air);position:relative}
+.engine-tabs .active::after{content:"";position:absolute;left:0;right:0;bottom:-15px;height:2px;background:var(--ti-signal)}
+.engine-status{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--ti-air)}
+.engine-status .dot{width:7px;height:7px;background:var(--ti-signal);border-radius:50%;animation:pulse 2s infinite}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.kpi{background:rgba(255,255,255,.04);border:1px solid var(--ti-line-2);border-radius:12px;padding:14px}
+.kpi .label{font-size:10px;font-weight:600;letter-spacing:.1em;color:#94A3B8;text-transform:uppercase;margin-bottom:6px}
+.kpi .val{font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.kpi .val.signal{color:var(--ti-air)}
+.kpi .delta{font-size:11px;color:var(--ti-air);font-weight:600;margin-top:4px;display:inline-flex;align-items:center;gap:4px}
+/* funnel bars */
+.funnel{margin-top:6px}
+.funnel-row{display:flex;align-items:center;gap:12px;margin-bottom:9px;font-size:12px}
+.funnel-row .stage{width:84px;color:#CBD5E1;font-weight:500}
+.funnel-row .bar-wrap{flex:1;background:rgba(255,255,255,.05);height:18px;border-radius:4px;overflow:hidden;position:relative}
+.funnel-row .bar{height:100%;background:var(--ti-signal);border-radius:4px;width:0;transition:width 1.6s var(--ease)}
+.funnel-row .pct{width:44px;text-align:right;color:var(--ti-paper);font-weight:700;font-variant-numeric:tabular-nums}
+/* sparkline */
+.spark{margin-top:18px;padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--ti-line-2);border-radius:12px}
+.spark-head{display:flex;justify-content:space-between;font-size:11px;font-weight:600;letter-spacing:.06em;color:#94A3B8;text-transform:uppercase;margin-bottom:10px}
+.spark-svg{width:100%;height:54px}
+.spark-svg path.area{fill:rgba(132,204,22,.16)}
+.spark-svg path.line{fill:none;stroke:var(--ti-air);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.spark-svg circle{fill:var(--ti-signal)}
+
+/* ============================================================
+   LOGOS / TRUST STRIP — single big statement
+   ============================================================ */
+.statement{padding:64px 0;background:var(--ti-paper);border-top:1px solid var(--ti-line);border-bottom:1px solid var(--ti-line)}
+.statement-inner{display:flex;align-items:center;gap:40px;flex-wrap:wrap;justify-content:space-between}
+.statement h3{font-size:clamp(24px,2.8vw,38px);font-weight:700;letter-spacing:-.025em;flex:1;min-width:300px;line-height:1.15}
+.statement .proof-row{display:flex;gap:30px;flex-wrap:wrap}
+.proof{text-align:left}
+.proof .n{font-size:42px;font-weight:800;letter-spacing:-.03em;color:var(--ti-ink);line-height:1}
+.proof .n.signal{color:var(--ti-deep)}
+.proof .lbl{font-size:12px;color:var(--ti-mute);font-weight:500;margin-top:6px;max-width:18ch;line-height:1.35}
+
+/* ============================================================
+   RESULTS — case studies as editorial columns (47x / 197x)
+   ============================================================ */
+.results{padding:96px 0;background:var(--ti-bone)}
+.section-head{max-width:780px;margin-bottom:48px}
+.section-head .kicker{margin-bottom:18px}
+.section-head h2{font-size:clamp(34px,4.5vw,56px);font-weight:800;letter-spacing:-.03em;line-height:1.02;margin-bottom:18px}
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:880px){.results-grid{grid-template-columns:1fr}}
+.case{
+  background:var(--ti-paper);border:1px solid var(--ti-line);border-radius:var(--r-lg);
+  padding:36px 32px 32px;position:relative;overflow:hidden;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+}
+.case:hover{transform:translateY(-3px);box-shadow:var(--sh-card)}
+.case .badge{position:absolute;top:24px;right:24px;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--ti-deep);background:var(--ti-paper-2);padding:5px 10px;border-radius:999px;text-transform:uppercase}
+.case .brand{font-size:13px;font-weight:700;color:var(--ti-mute);letter-spacing:.02em;margin-bottom:8px;text-transform:uppercase}
+.case .big{font-size:clamp(80px,11vw,140px);font-weight:900;letter-spacing:-.05em;line-height:.9;color:var(--ti-ink);margin-bottom:6px}
+.case .big .x{color:var(--ti-deep)}
+.case .big .signal{color:var(--ti-signal);-webkit-text-stroke:1px var(--ti-deep)}
+.case .metric{font-size:16px;font-weight:700;color:var(--ti-ink);margin-bottom:14px}
+.case .desc{font-size:14px;line-height:1.55;color:#475569;margin-bottom:20px}
+.case .foot{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--ti-mute);border-top:1px solid var(--ti-line);padding-top:16px}
+.case .foot .duration{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.case .foot svg{width:13px;height:13px}
+
+/* ============================================================
+   HOW IT WORKS — 3 numbered editorial steps, vertical timeline
+   ============================================================ */
+.how{padding:96px 0;background:var(--ti-ink);color:var(--ti-paper);position:relative;overflow:hidden}
+.how::before{
+  content:"";position:absolute;left:50%;top:-100px;width:600px;height:600px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='120 93 135 189'><path fill='%2384CC16' d='M265.4 93c.7.4.4 5.7.4 6.9l.04 9.7-.07 29.7.01 91.7c-10.4-.1-20.8-.1-31.2 0-6 .05-11.9-.08-17.9.07l-.02-36.5c0-2-.3-10 .05-11.3-1.3.6-9.96 9.7-11.6 11.3l-30.8 31.1c-1 .97-4.8 4.45-5.04 5.39l.2.3c2.03.32 9.07-.06 11.74-.01 11.7.2 23.6-.1 35.3.07-.2 16.8.1 33.6-.02 50.3l-24.1.01c-8.9.1-17.8.06-26.6-.08-22.7-1.6-40-17.9-44.4-39.96-2.8-14.2.6-28.9 9.5-40.3 2-2.5 4.2-4.7 6.4-7 3.4-3.5 6.8-7 10.2-10.5l26.1-26.25c3.4-3.37 6.7-6.75 10.1-10.1.7-.7 2.5-2.15 2.27-3.1-4.9-.32-12.2 0-17.3 0l-34.1-.06c-.35-11.7.16-23.7-.05-35.43-.09-5.16-.11-10.79.17-15.92l89.9-.03h76.5c4.7 0 9.8.08 14.5-.08Z'/></svg>") center/contain no-repeat;
+  opacity:.05;transform:translateX(-50%);pointer-events:none;
+}
+.how .section-head h2{color:var(--ti-paper)}
+.how .lead{color:#CBD5E1}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;z-index:2}
+@media(max-width:880px){.steps{grid-template-columns:1fr;gap:32px}}
+.step{padding:0 28px 0 0;position:relative}
+.step:not(:last-child)::after{
+  content:"";position:absolute;right:-1px;top:42px;bottom:0;width:1px;
+  background:linear-gradient(to bottom,var(--ti-line-2),transparent);
+}
+.step:not(:last-child)::before{
+  content:"";position:absolute;right:-7px;top:36px;width:14px;height:14px;
+  background:var(--ti-ink);border:2px solid var(--ti-signal);border-radius:50%;
+}
+@media(max-width:880px){.step:not(:last-child)::after,.step:not(:last-child)::before{display:none}}
+.step .num{
+  font-size:14px;font-weight:700;letter-spacing:.16em;color:var(--ti-air);
+  display:inline-flex;align-items:center;gap:12px;margin-bottom:18px;text-transform:uppercase;
+}
+.step .num .dash{width:36px;height:2px;background:var(--ti-signal)}
+.step h3{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--ti-paper);margin-bottom:14px;line-height:1.15}
+.step p{font-size:15px;line-height:1.6;color:#CBD5E1;margin-bottom:18px}
+.step .detail{font-size:13px;color:var(--ti-air);font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.step .detail svg{width:14px;height:14px}
+
+/* ============================================================
+   FUNNEL VIZ — interactive-look pipeline
+   ============================================================ */
+.funnel-section{padding:96px 0;background:var(--ti-paper);border-top:1px solid var(--ti-line)}
+.funnel-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:center}
+@media(max-width:980px){.funnel-layout{grid-template-columns:1fr;gap:40px}}
+.funnel-viz{display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px 24px;background:var(--ti-bone);border:1px solid var(--ti-line);border-radius:var(--r-xl)}
+.funnel-viz .row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--ti-ink);color:var(--ti-paper);
+  padding:18px 22px;border-radius:10px;width:100%;
+  position:relative;transition:transform .3s var(--ease);
+  cursor:default;
+}
+.funnel-viz .row:hover{transform:translateX(6px)}
+.funnel-viz .row.w1{width:100%}
+.funnel-viz .row.w2{width:86%;background:#1E293B}
+.funnel-viz .row.w3{width:68%;background:#14532D}
+.funnel-viz .row.w4{width:46%;background:var(--ti-deep)}
+.funnel-viz .row.w5{width:30%;background:var(--ti-signal);color:var(--ti-ink)}
+.funnel-viz .row .label{font-size:13px;font-weight:700;letter-spacing:-.01em;display:inline-flex;align-items:center;gap:10px}
+.funnel-viz .row .label .n{font-size:11px;font-weight:700;color:var(--ti-air);opacity:.7}
+.funnel-viz .row.w5 .label .n{color:var(--ti-ink);opacity:.6}
+.funnel-viz .row .count{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.funnel-viz .row .count .unit{font-size:12px;font-weight:600;opacity:.7;margin-left:2px}
+.funnel-viz .arrow{color:var(--ti-mute);font-size:11px}
+
+/* ============================================================
+   OFFER — trial breakdown, the conversion moment
+   ============================================================ */
+.offer{padding:96px 0;background:var(--ti-deep);color:var(--ti-paper);position:relative;overflow:hidden}
+.offer::before{
+  content:"";position:absolute;right:-200px;bottom:-200px;width:700px;height:700px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='120 93 135 189'><path fill='%23A3E635' d='M265.4 93c.7.4.4 5.7.4 6.9l.04 9.7-.07 29.7.01 91.7c-10.4-.1-20.8-.1-31.2 0-6 .05-11.9-.08-17.9.07l-.02-36.5c0-2-.3-10 .05-11.3-1.3.6-9.96 9.7-11.6 11.3l-30.8 31.1c-1 .97-4.8 4.45-5.04 5.39l.2.3c2.03.32 9.07-.06 11.74-.01 11.7.2 23.6-.1 35.3.07-.2 16.8.1 33.6-.02 50.3l-24.1.01c-8.9.1-17.8.06-26.6-.08-22.7-1.6-40-17.9-44.4-39.96-2.8-14.2.6-28.9 9.5-40.3 2-2.5 4.2-4.7 6.4-7 3.4-3.5 6.8-7 10.2-10.5l26.1-26.25c3.4-3.37 6.7-6.75 10.1-10.1.7-.7 2.5-2.15 2.27-3.1-4.9-.32-12.2 0-17.3 0l-34.1-.06c-.35-11.7.16-23.7-.05-35.43-.09-5.16-.11-10.79.17-15.92l89.9-.03h76.5c4.7 0 9.8.08 14.5-.08Z'/></svg>") center/contain no-repeat;
+  opacity:.10;pointer-events:none;
+}
+.offer-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:center;position:relative;z-index:2}
+@media(max-width:980px){.offer-grid{grid-template-columns:1fr;gap:40px}}
+.offer h2{color:var(--ti-paper);font-size:clamp(34px,4.5vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.04;margin-bottom:20px}
+.offer h2 .signal{color:var(--ti-air)}
+.offer .lead{color:#CBD5E1;margin-bottom:32px}
+.trial-card{
+  background:var(--ti-paper);color:var(--ti-ink);border-radius:var(--r-xl);
+  padding:36px;box-shadow:var(--sh-deep);position:relative;
+}
+.trial-card .tag{
+  position:absolute;top:-14px;left:36px;
+  background:var(--ti-signal);color:var(--ti-ink);font-size:11px;font-weight:800;
+  letter-spacing:.1em;padding:6px 12px;border-radius:999px;text-transform:uppercase;
+}
+.trial-card h3{font-size:28px;font-weight:800;letter-spacing:-.025em;margin:14px 0 6px}
+.trial-card .price{font-size:14px;color:var(--ti-mute);font-weight:500;margin-bottom:22px}
+.trial-card .price .free{color:var(--ti-deep);font-weight:800;font-size:16px}
+.trial-list{list-style:none;margin-bottom:26px}
+.trial-list li{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--ti-line);font-size:14px;font-weight:500;color:#1E293B;
+}
+.trial-list li:last-child{border-bottom:none}
+.trial-list li svg{width:18px;height:18px;color:var(--ti-deep);flex:none;margin-top:1px}
+.trial-list li b{font-weight:700;color:var(--ti-ink)}
+.trial-card .btn{width:100%;justify-content:center;margin-bottom:14px}
+.trial-card .no-card{font-size:12px;color:var(--ti-mute);text-align:center;font-weight:500;display:inline-flex;justify-content:center;align-items:center;gap:6px;width:100%}
+.trial-card .no-card svg{width:13px;height:13px;color:var(--ti-deep)}
+
+/* ============================================================
+   FAQ — accordion editorial
+   ============================================================ */
+.faq{padding:96px 0;background:var(--ti-bone)}
+.faq-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:64px}
+@media(max-width:980px){.faq-grid{grid-template-columns:1fr;gap:32px}}
+.faq-list{border-top:1px solid var(--ti-line)}
+.faq-item{border-bottom:1px solid var(--ti-line)}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:24px 4px;cursor:pointer;font-size:18px;font-weight:600;letter-spacing:-.015em;
+  color:var(--ti-ink);transition:color .2s;background:none;border:none;width:100%;text-align:left;font-family:inherit;
+}
+.faq-q:hover{color:var(--ti-deep)}
+.faq-q .icon{
+  width:28px;height:28px;flex:none;border-radius:50%;
+  background:var(--ti-paper-2);color:var(--ti-deep);
+  display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;
+  transition:transform .3s var(--ease),background .3s;
+}
+.faq-item.open .faq-q .icon{transform:rotate(45deg);background:var(--ti-signal);color:var(--ti-ink)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s var(--ease)}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding:0 4px 24px;font-size:15px;line-height:1.6;color:#475569;max-width:60ch}
+
+/* ============================================================
+   FINAL CTA + sticky
+   ============================================================ */
+.final{padding:96px 0 64px;background:var(--ti-ink);color:var(--ti-paper);text-align:center;position:relative;overflow:hidden}
+.final::before{
+  content:"";position:absolute;left:50%;top:50%;width:1000px;height:1000px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='120 93 135 189'><path fill='%2384CC16' d='M265.4 93c.7.4.4 5.7.4 6.9l.04 9.7-.07 29.7.01 91.7c-10.4-.1-20.8-.1-31.2 0-6 .05-11.9-.08-17.9.07l-.02-36.5c0-2-.3-10 .05-11.3-1.3.6-9.96 9.7-11.6 11.3l-30.8 31.1c-1 .97-4.8 4.45-5.04 5.39l.2.3c2.03.32 9.07-.06 11.74-.01 11.7.2 23.6-.1 35.3.07-.2 16.8.1 33.6-.02 50.3l-24.1.01c-8.9.1-17.8.06-26.6-.08-22.7-1.6-40-17.9-44.4-39.96-2.8-14.2.6-28.9 9.5-40.3 2-2.5 4.2-4.7 6.4-7 3.4-3.5 6.8-7 10.2-10.5l26.1-26.25c3.4-3.37 6.7-6.75 10.1-10.1.7-.7 2.5-2.15 2.27-3.1-4.9-.32-12.2 0-17.3 0l-34.1-.06c-.35-11.7.16-23.7-.05-35.43-.09-5.16-.11-10.79.17-15.92l89.9-.03h76.5c4.7 0 9.8.08 14.5-.08Z'/></svg>") center/contain no-repeat;
+  opacity:.06;transform:translate(-50%,-50%);pointer-events:none;
+}
+.final h2{font-size:clamp(36px,5vw,64px);font-weight:800;letter-spacing:-.035em;line-height:1.02;color:var(--ti-paper);max-width:14ch;margin:0 auto 22px;position:relative}
+.final p{font-size:18px;color:#CBD5E1;max-width:54ch;margin:0 auto 36px;position:relative}
+.final .ctas{display:inline-flex;flex-wrap:wrap;gap:14px;justify-content:center;position:relative}
+.final .meta{margin-top:24px;font-size:13px;color:#94A3B8;font-weight:500;position:relative;display:inline-flex;gap:18px;flex-wrap:wrap;justify-content:center}
+
+/* sticky bottom CTA */
+.sticky-cta{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(120px);
+  z-index:90;display:inline-flex;align-items:center;gap:14px;
+  background:var(--ti-ink);color:var(--ti-paper);
+  padding:10px 10px 10px 22px;border-radius:999px;
+  box-shadow:0 30px 60px -20px rgba(15,23,42,.5),0 0 0 1px var(--ti-line-2);
+  font-size:14px;font-weight:500;
+  transition:transform .45s var(--ease);
+}
+.sticky-cta.show{transform:translateX(-50%) translateY(0)}
+.sticky-cta .trial{font-weight:700}
+.sticky-cta .trial b{color:var(--ti-air)}
+.sticky-cta .btn{padding:10px 18px;font-size:13px}
+.sticky-cta .close{
+  width:22px;height:22px;background:rgba(255,255,255,.08);border:none;color:#94A3B8;
+  border-radius:50%;cursor:pointer;font-size:14px;line-height:1;flex:none;
+}
+.sticky-cta .close:hover{background:rgba(255,255,255,.15);color:var(--ti-paper)}
+@media(max-width:560px){.sticky-cta{font-size:12px;padding:8px 8px 8px 16px}.sticky-cta .hide-sm{display:none}}
+
+/* ---------- FOOTER ---------- */
+.footer{background:var(--ti-ink);color:#94A3B8;padding:48px 0 36px;border-top:1px solid var(--ti-line-2)}
+.footer-inner{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap}
+.footer .wordmark{color:var(--ti-paper)}
+.footer .wordmark .mark-svg{color:var(--ti-signal)}
+.footer-links{display:flex;gap:28px;font-size:13px;font-weight:500}
+.footer-meta{font-size:12px;line-height:1.7}
+.footer-meta a{color:#94A3B8}
+.footer-meta a:hover{color:var(--ti-paper)}
+
+/* ---------- entrance anims ---------- */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- REAL TARGETIVE MARK (SVG inline) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ti-mark" viewBox="120 93 135 189">
+    <path fill="currentColor" d="M 265.472656 93.035156 C 266.230469 93.40625 265.875 98.761719 265.871094 100 L 265.910156 109.679688 L 265.847656 139.339844 L 265.855469 231.117188 C 255.441406 231.03125 245.027344 231.03125 234.613281 231.113281 C 228.617188 231.152344 222.746094 231.023438 216.738281 231.167969 L 216.71875 194.632812 C 216.71875 192.652344 217.027344 184.640625 216.726562 183.34375 C 215.417969 183.921875 206.765625 192.984375 205.140625 194.609375 L 174.3125 225.699219 C 173.363281 226.667969 169.554688 230.148438 169.273438 231.085938 L 169.476562 231.378906 C 171.511719 231.699219 178.550781 231.320312 181.226562 231.371094 C 192.949219 231.570312 204.789062 231.265625 216.511719 231.441406 C 216.34375 248.210938 216.636719 265.039062 216.519531 281.796875 L 192.371094 281.800781 C 183.484375 281.894531 174.597656 281.867188 165.714844 281.722656 C 143.0625 280.140625 125.703125 263.816406 121.261719 241.765625 C 118.445312 227.585938 121.941406 212.882812 130.835938 201.488281 C 132.800781 198.984375 135.027344 196.785156 137.234375 194.496094 C 140.621094 190.980469 144.039062 187.488281 147.480469 184.023438 L 173.546875 157.765625 C 176.898438 154.398438 180.246094 151.019531 183.605469 147.65625 C 184.308594 146.953125 186.066406 145.507812 185.851562 144.550781 C 180.941406 144.242188 173.671875 144.558594 168.550781 144.558594 L 134.480469 144.5 C 134.136719 132.773438 134.644531 120.800781 134.441406 109.050781 C 134.351562 103.890625 134.332031 98.261719 134.613281 93.136719 L 224.503906 93.105469 L 250.949219 93.113281 C 255.679688 93.109375 260.761719 93.195312 265.472656 93.035156 Z"/>
+  </symbol>
+</svg>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="wordmark">
+      <svg class="mark-svg"><use href="#ti-mark"/></svg>
+      targetive.ai
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#proof">Results</a>
+      <a href="#offer">Trial</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <span class="trial-pill">7-day trial · no card</span>
+      <a href="#offer" class="btn btn-primary">Start free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <span class="hero-eyebrow"><span class="pulse"></span>AI outbound that books calls, not excuses</span>
+        <h1>
+          A calendar <span class="underline-accent">full of qualified</span> sales calls. <span class="accent">On autopilot.</span>
+        </h1>
+        <p class="hero-sub">
+          targetive.ai builds your list, writes the messages, follows up with every decision-maker, and books the meetings. You show up and close.
+        </p>
+        <div class="hero-ctas">
+          <a href="#offer" class="btn btn-primary btn-lg">
+            Start 7-day free trial
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#proof" class="btn btn-outline btn-lg">See the numbers</a>
+        </div>
+        <div class="hero-trust">
+          <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>No credit card</span>
+          <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Live in 48 hours</span>
+          <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Cancel anytime</span>
+        </div>
+      </div>
+
+      <!-- engine mock -->
+      <div class="engine-mock" id="engine-mock">
+        <div class="engine-bar">
+          <div class="engine-tabs">
+            <span class="active">Pipeline</span>
+            <span>Campaigns</span>
+            <span>Inbox</span>
+          </div>
+          <span class="engine-status"><span class="dot"></span>Engine live</span>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="label">Emails sent</div>
+            <div class="val" data-count="2840">0</div>
+            <div class="delta">▲ 12% vs last 7d</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Reply rate</div>
+            <div class="val signal"><span data-count="9" data-suffix=".4%">0</span></div>
+            <div class="delta">▲ 2.1pp</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Calls booked</div>
+            <div class="val" data-count="47">0</div>
+            <div class="delta">▲ 18 this week</div>
+          </div>
+        </div>
+
+        <div class="funnel">
+          <div class="funnel-row"><span class="stage">Sent</span><div class="bar-wrap"><div class="bar" data-pct="100"></div></div><span class="pct">100%</span></div>
+          <div class="funnel-row"><span class="stage">Opened</span><div class="bar-wrap"><div class="bar" data-pct="62"></div></div><span class="pct">62%</span></div>
+          <div class="funnel-row"><span class="stage">Replied</span><div class="bar-wrap"><div class="bar" data-pct="14"></div></div><span class="pct">14%</span></div>
+          <div class="funnel-row"><span class="stage">Booked</span><div class="bar-wrap"><div class="bar" data-pct="5"></div></div><span class="pct">5%</span></div>
+        </div>
+
+        <div class="spark">
+          <div class="spark-head"><span>Booked calls · last 30 days</span><span style="color:var(--ti-air)">+47</span></div>
+          <svg class="spark-svg" viewBox="0 0 280 54" preserveAspectRatio="none">
+            <path class="area" d="M0,50 L0,40 L20,38 L40,42 L60,34 L80,30 L100,32 L120,24 L140,22 L160,18 L180,14 L200,16 L220,10 L240,8 L260,4 L280,2 L280,54 L0,54 Z"/>
+            <path class="line" d="M0,40 L20,38 L40,42 L60,34 L80,30 L100,32 L120,24 L140,22 L160,18 L180,14 L200,16 L220,10 L240,8 L260,4 L280,2"/>
+            <circle cx="280" cy="2" r="3"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ STATEMENT / TRUST ============ -->
+<section class="statement">
+  <div class="container">
+    <div class="statement-inner">
+      <h3>If predictable pipeline matters, you're in the right place.</h3>
+      <div class="proof-row">
+        <div class="proof"><div class="n signal">47<span style="font-size:.6em">x</span></div><div class="lbl">qualified leads for Sió</div></div>
+        <div class="proof"><div class="n signal">197<span style="font-size:.6em">x</span></div><div class="lbl">pipeline lift for CARRIES</div></div>
+        <div class="proof"><div class="n">7 days</div><div class="lbl">to first booked call</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESULTS / CASES ============ -->
+<section class="results" id="proof">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="kicker dot">Real client outcomes</span>
+      <h2>The kind of numbers cold-outbound is supposed to deliver.</h2>
+      <p class="lead">Real client engagements, real campaigns, real revenue impact. Not guarantees, just what happened when we turned the engine on.</p>
+    </div>
+    <div class="results-grid">
+      <article class="case reveal">
+        <span class="badge">Case study</span>
+        <div class="brand">Sió — Hungarian FMCG</div>
+        <div class="big"><span class="x">47</span><span class="signal">x</span></div>
+        <div class="metric">qualified leads in 4 weeks</div>
+        <p class="desc">From manual list-building to 47x the qualified pipeline, with personalisation tuned to the actual decision-maker at each retailer.</p>
+        <div class="foot">
+          <span class="duration"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>4-week campaign</span>
+          <span>Read story →</span>
+        </div>
+      </article>
+      <article class="case reveal">
+        <span class="badge">Case study</span>
+        <div class="brand">CARRIES — B2B services</div>
+        <div class="big"><span class="x">197</span><span class="signal">x</span></div>
+        <div class="metric">pipeline lift vs. prior quarter</div>
+        <p class="desc">Replaced spreadsheet prospecting with AI-driven targeting and follow-up. The reply rate 4x'd in the first month.</p>
+        <div class="foot">
+          <span class="duration"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>90-day engagement</span>
+          <span>Read story →</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="kicker on-dark dot">How the engine runs</span>
+      <h2>Three steps. One engine. Calls on your calendar.</h2>
+      <p class="lead on-dark">You bring the offer and the close. The engine handles the rest: list, message, follow-up, book.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <span class="num"><span class="dash"></span>Step 01</span>
+        <h3>We build your list from a fresh database.</h3>
+        <p>Not bought lists. Verified Hungarian and European company + decision-maker data, filtered to your ICP, profiled by industry and intent signals.</p>
+        <span class="detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+          450k+ companies, verified contacts
+        </span>
+      </div>
+      <div class="step reveal">
+        <span class="num"><span class="dash"></span>Step 02</span>
+        <h3>AI writes and sends personalised outreach.</h3>
+        <p>Every message is tuned to the company profile, the pain point, and the role. Not templates. Not mail-merge. Real personalisation at scale.</p>
+        <span class="detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Sends from your domain, safely
+        </span>
+      </div>
+      <div class="step reveal">
+        <span class="num"><span class="dash"></span>Step 03</span>
+        <h3>It follows up, qualifies, books the call.</h3>
+        <p>The engine never forgets a follow-up. Interested replies get qualified against your criteria, then a meeting lands on your calendar. You close.</p>
+        <span class="detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Direct to your calendar
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FUNNEL VIZ ============ -->
+<section class="funnel-section">
+  <div class="container">
+    <div class="funnel-layout">
+      <div class="reveal">
+        <span class="kicker dot">Live engine math</span>
+        <h2 style="font-size:clamp(30px,4vw,46px);font-weight:800;letter-spacing:-.025em;margin:18px 0;line-height:1.05">From 5,000 emails to 47 booked calls. Without you touching a single one.</h2>
+        <p class="lead" style="margin-bottom:24px">This is the shape of a healthy outbound engine. The engine optimises every stage automatically: deliverability, open rate, reply rate, and conversion to booked call.</p>
+        <a href="#offer" class="btn btn-dark btn-lg">Run this for me</a>
+      </div>
+      <div class="funnel-viz reveal">
+        <div class="row w1"><span class="label"><span class="n">01</span>Emails sent</span><span class="count">5,000<span class="unit">+</span></span></div>
+        <div class="arrow">▼</div>
+        <div class="row w2"><span class="label"><span class="n">02</span>Delivered to inbox</span><span class="count">4,650<span class="unit"> · 93%</span></span></div>
+        <div class="arrow">▼</div>
+        <div class="row w3"><span class="label"><span class="n">03</span>Opened</span><span class="count">2,880<span class="unit"> · 62%</span></span></div>
+        <div class="arrow">▼</div>
+        <div class="row w4"><span class="label"><span class="n">04</span>Replied</span><span class="count">403<span class="unit"> · 14%</span></span></div>
+        <div class="arrow">▼</div>
+        <div class="row w5"><span class="label"><span class="n">05</span>Booked calls</span><span class="count">47</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OFFER / TRIAL ============ -->
+<section class="offer" id="offer">
+  <div class="container">
+    <div class="offer-grid">
+      <div class="reveal">
+        <span class="kicker on-dark dot">The offer</span>
+        <h2>Run the engine free for <span class="signal">7 days.</span> Decide with calls on the calendar, not a slide deck.</h2>
+        <p class="lead">No credit card to start. We turn the engine on, you watch the inbox fill up. If it doesn't book qualified calls in 7 days, you walk. Zero cost, zero friction.</p>
+        <div style="display:inline-flex;gap:18px;flex-wrap:wrap;color:#CBD5E1;font-size:14px;font-weight:500">
+          <span style="display:inline-flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3E635" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Onboarded in 48h</span>
+          <span style="display:inline-flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3E635" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Cancel in one click</span>
+          <span style="display:inline-flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3E635" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Your data stays yours</span>
+        </div>
+      </div>
+
+      <div class="trial-card reveal">
+        <span class="tag">Free trial · no card</span>
+        <h3>7-Day Engine Trial</h3>
+        <div class="price"><span class="free">Free</span> for 7 days · then from €490/mo</div>
+
+        <ul class="trial-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg><span><b>Full engine access.</b> List-build, AI personalisation, deliverability setup, follow-up automation.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg><span><b>Dedicated domains + inboxes.</b> Set up so your main domain never touches cold traffic.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg><span><b>Live dashboard.</b> Watch sent, opened, replied, booked in real time.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg><span><b>Calls booked to your calendar.</b> Qualified against your criteria before they hit your inbox.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg><span><b>No credit card, no lock-in.</b> If it doesn't book calls, you owe nothing.</span></li>
+        </ul>
+
+        <a href="#" class="btn btn-primary btn-lg">Start your free 7-day trial
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <span class="no-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>No credit card required · cancel anytime</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="faq-grid">
+      <div class="reveal">
+        <span class="kicker dot">FAQ</span>
+        <h2 style="font-size:clamp(30px,4vw,46px);font-weight:800;letter-spacing:-.025em;margin:18px 0;line-height:1.05">Honest answers, before you start.</h2>
+        <p class="lead">The questions every B2B founder asks before they hand their outbound to an AI. Including the awkward ones.</p>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-q">Will the emails look like spam to my prospects?<span class="icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">No. Every message is written to the company and the decision-maker, references their actual situation, and is sent from dedicated domains we set up for you. Your main domain never touches cold traffic. We also handle SPF, DKIM and inbox warmup so you land in the primary inbox, not promotions.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">How fast will I see booked calls?<span class="icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Onboarding takes about 48 hours (domain setup, ICP definition, first campaign). First replies typically land within the first 3 to 5 days of sending. The 7-day trial is designed so you see real booked calls before you ever pay a cent.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Do I need to write the emails or manage anything?<span class="icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">No. We build the list, write the copy, send the emails, run the follow-ups, qualify the replies, and book the calls onto your calendar. Your job is to show up and close. That's the entire point.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">What if it doesn't work for my industry?<span class="icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">That's exactly what the trial is for. We start small, measure, and if the numbers don't justify continuing, we tell you honestly. We've turned down prospects where outbound wasn't the right channel. We'd rather lose a bad fit than bill a bad result.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Is my data safe? Is my domain safe?<span class="icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Yes. We use alternative domains and dedicated inboxes for sending, never your primary domain. Your contact data and your prospects' data stay in an isolated, EU-hosted environment. Nothing is sold, shared, or used to train models.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Why is the trial free when no one else does that?<span class="icon">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Because we're confident the engine books calls. If it works for you in 7 days, you'll pay to keep it running. If it doesn't, no amount of sales calls would have kept you anyway. The trial is the pitch.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="final">
+  <div class="container">
+    <h2>Stop prospecting. Start closing.</h2>
+    <p>The engine runs. The calls book. You close. Free for 7 days, no card, no risk.</p>
+    <div class="ctas">
+      <a href="#offer" class="btn btn-primary btn-lg">Start your free trial
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#" class="btn btn-ghost-on-dark btn-lg">Book a call instead</a>
+    </div>
+    <div class="meta">
+      <span>· 48-hour onboarding</span>
+      <span>· No credit card</span>
+      <span>· Cancel anytime</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STICKY CTA ============ -->
+<div class="sticky-cta" id="sticky-cta">
+  <span class="trial"><b>7-day trial</b> · no card</span>
+  <a href="#offer" class="btn btn-primary">Start free
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+  </a>
+  <button class="close" id="sticky-close" aria-label="Dismiss">×</button>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <a href="#" class="wordmark" style="margin-bottom:14px">
+          <svg class="mark-svg"><use href="#ti-mark"/></svg>
+          targetive.ai
+        </a>
+        <div class="footer-meta">AI cold-outbound that books qualified calls.<br>A SWEY Innovations Kft. product.</div>
+      </div>
+      <div class="footer-links">
+        <a href="#how">How it works</a>
+        <a href="#proof">Results</a>
+        <a href="#offer">Free trial</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="footer-meta">
+        <strong style="color:#CBD5E1">Contact</strong><br>
+        sales@targetive.ai<br>
+        +36 30 212 1857<br>
+        1011 Budapest, Jégverem utca 6.
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Count-up KPIs when engine-mock enters viewport
+  function animateCount(el){
+    var target = parseFloat(el.getAttribute('data-count'));
+    var suffix = el.getAttribute('data-suffix') || '';
+    var start = 0, dur = 1400, t0 = null;
+    function fmt(n){ return n >= 1000 ? Math.round(n).toLocaleString('en-US') : Math.round(n); }
+    function step(ts){
+      if(!t0) t0 = ts;
+      var p = Math.min((ts - t0)/dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(target * eased) + suffix;
+      if(p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(target) + suffix;
+    }
+    requestAnimationFrame(step);
+  }
+
+  function animateFunnelBars(parent){
+    parent.querySelectorAll('.bar').forEach(function(b){
+      var pct = b.getAttribute('data-pct');
+      // staggered
+      setTimeout(function(){ b.style.width = pct + '%'; }, 200);
+    });
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:.15});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  // engine-mock special anims
+  var mock = document.getElementById('engine-mock');
+  if(mock){
+    var mio = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          mock.querySelectorAll('[data-count]').forEach(animateCount);
+          animateFunnelBars(mock);
+          mio.unobserve(mock);
+        }
+      });
+    }, {threshold:.3});
+    mio.observe(mock);
+  }
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var item = btn.closest('.faq-item');
+      var wasOpen = item.classList.contains('open');
+      // close all
+      document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+
+  // Sticky CTA — appear after scrolling past hero, dismissable
+  var sticky = document.getElementById('sticky-cta');
+  var stickyClose = document.getElementById('sticky-close');
+  var dismissed = false;
+  function updateSticky(){
+    if(dismissed) return;
+    var scrolled = window.scrollY || window.pageYOffset;
+    if(scrolled > 700){
+      sticky.classList.add('show');
+    } else {
+      sticky.classList.remove('show');
+    }
+  }
+  window.addEventListener('scroll', updateSticky, {passive:true});
+  if(stickyClose){
+    stickyClose.addEventListener('click', function(){
+      dismissed = true;
+      sticky.classList.remove('show');
+    });
+  }
+})();
+</script>
+</body>
+</html>
